@@ -1,0 +1,123 @@
+
+<head>
+	<title>E-Learning-CVE</title>
+</head>
+
+<body>
+	<!-- floating UI box -->
+	<div class="ui">
+	
+		<button id='prova' type="button">Prova!</button>
+		
+		<h1>E-Learning-CVE</h1>
+		<p class="subtitle">Demo CVE</p>
+		<h2> LISTA PLAYER LOGGATI </h2> 
+	<ul>
+		{{#each players}}
+		
+			<li> {{nome}} ----> {{_id}} -----> {{color}} </li>
+		
+		{{/each}}
+	</ul>	
+		{{#if loginMode}}	
+			{{> temporary_login}}
+		{{else}}
+			
+			{{> temporary_logout}}
+		{{/if}}		
+	</div>
+	
+	
+<x3d class="{{#if buildMode}}build{{/if}}">
+	  <scene>
+	  	<!-- camera/scene settings -->
+	  	<viewpoint position="8.19 12.33 19.5"
+	  		orientation="-0.834 0.55 0 0.65"></viewpoint>
+      <navigationinfo type="turntable" headlight="false"></navigationinfo>
+	  	
+	  	<!-- lights -->
+	  	<pointLight location="0 40 0" intensity="0.3"></pointLight>
+	  	<pointLight location="-30 10 -20" intensity="0.7"></pointLight>
+	  	<directionalLight direction="-1 -1 -0.7" color="#ffe"
+	  		intensity="0.8" shadowIntensity="0.4"></directionalLight>
+	  	
+	  	<!-- ground -->
+	  	<transform rotation="-1.5707963267948966 0 0 1.5707963267948966">
+		  	<shape>
+		  		<appearance>
+		  			<!-- XXX could be improved to a grass texture -->
+			  		<material diffuseColor="#4A9"></material>
+			  	</appearance>
+			  	<plane size="20 20"></plane>
+			  </shape>
+			</transform>
+
+
+		<transform DEF="lavagna" id="lavagna_id" translation="0 2 0" scale="0.1 0.1 0.1" rotation="0 1 0 -1.5708">
+       	 		<inline nameSpaceName="lavagna" 
+            			mapDEFToID="true"
+            			onclick='Meteor.call("quiz");' 
+                  	 	url="/x3d/lavagna.x3d">
+                  	 
+           		</inline>
+     		</transform>	
+			
+	  	<group id="all_players">
+	    {{#each players}}
+	    	<transform id="{{_id}}" translation="{{x}} {{y}} {{z}}" scale="0.5 0.5 0.5">
+       	 		<inline nameSpaceName="{{_id}}" 
+            			mapDEFToID="true"
+            			onload='Meteor.call("all_players_color", "{{_id}}", "{{color}}");'
+                  	 	url="/x3d/LEGO_MAN.x3d">
+                  	 
+           		</inline>
+     		</transform>	
+     		
+	    {{/each}}
+	    
+	  </group> 
+	  
+	  </scene>
+	</x3d>
+  
+</body>
+
+
+
+<template name="x3d_template">
+	
+
+</template>
+
+
+
+<template name="quiz_template"> 
+  <div class="anti-modal-box">
+    <div class="anti-modal-header">
+      <div class="anti-modal-title">Quiz!</div>
+      <div class="anti-modal-closer">&times;</div>
+    </div>
+    <div class="anti-modal-body">
+     <form action="">
+		<fieldset>
+			<legend>Domanda</legend><br>
+ 			<input type="checkbox" name="html" value="html"/> A. Sono bello
+			 <br /> 
+ 			<input type="checkbox" name="css" value="css"/> B. Sono snello 
+		</fieldset>
+		<button id='esci_quiz' type="button">Esci</button>
+	</form>
+    </div>
+  </div>
+</template>
+
+
+
+
+
+
+
+
+
+
+

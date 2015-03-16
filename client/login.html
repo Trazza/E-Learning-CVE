@@ -1,0 +1,43 @@
+<template name="temporary_login">
+
+	<form id="temporary_login_form" action="action">
+		<div>
+      		<h2>Login</h2>
+      		 <br>
+      		Username:
+        	<input type="text" id="login-username" />
+        	<br>
+        	<br>
+        	<div class="color-picker">
+				<h2>SCEGLI IL TUO COLORE</h2>
+				{{#each colors}}
+					<div class="swatch{{#if activeColor}} active{{/if}}" style="background-color: {{code}}">
+						{{name}}
+					</div>
+				{{/each}}
+			</div>
+        	
+        	<button class="login-mode btn active" id="login-button">Sign in</button>
+     	</div>
+  	</form> 
+
+</template>
+
+
+<template name="temporary_logout">
+
+	<form id="temporary_logout_form" action="action">
+		<div>
+        	<input type="submit" id="logout-button" value="Logout" />
+     	</div>
+  	</form> 
+
+</template>
+
+
+
+
+
+
+
+
