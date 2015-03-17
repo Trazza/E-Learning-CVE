@@ -17,7 +17,11 @@ Session.set("color", "brown");
 Session.set("mode", "login");
 
 
-
+Tracker.autorun(function () {
+  Meteor.subscribe("players");
+  Meteor.subscribe("alerts");
+  //console.log(Players.find({quiz: 'quiz' }).count() + " stanno eseguendo il quiz");
+});
 
 /*
 var active_quiz = Alerts.findOne('quiz_id').value;
@@ -33,12 +37,66 @@ var handle_active_quiz = active_quiz.observeChanges({
     					}
     	)
     	
-    	Meteor.call('quiz');
+    	//Meteor.call('quiz');
+    	AntiModals.overlay('quiz_template', {
+      			modal: true,
+      		});
 	}
 });
 
 */
 
+var quiz_for_all = Alerts.find({value: true});
+var handle_quiz_for_all = quiz_for_all.observeChanges({
+	added: function (id, user) {
+	
+				console.log("ALERT: '"+ user.name + "' --> è stato attivato");
+				if (typeof(Session.get('user_id')) != 'undefined') {
+					
+					Players.update(
+    						{ _id: Session.get('user_id') }, 
+    						{ $set: //consente di modificare sono il parametro selezionato 
+    							{
+    								quiz: "quiz", 
+    							}
+    						}
+    				);
+				
+					AntiModals.overlay('quiz_template', {
+      					modal: true,
+      				});
+      			}
+			},
+	removed: function () {
+				console.log("ALERT: '"+ user.name + "' --> disattivato");
+			}
+		
+});
+
+var on_players_quiz = Players.find({quiz: 'quiz'});
+var handle_quiz_server = on_players_quiz.observeChanges({
+	removed: function () {
+				console.log("REMOVED: "+Players.find({quiz: 'quiz' }).count() + " stanno eseguendo il quiz ");
+			
+			
+				if (Players.find({quiz: 'quiz' }).count() == 0) {
+					console.log('Imposto valore Alert ->quiz = false ');
+					Alerts.update(
+    					{ _id: 'quiz_id' }, 
+    					{ $set: //consente di modificare sono il parametro selezionato 
+    						{
+    							value: false, 
+    						}
+    					}
+    				);
+				}
+				
+			},
+	added: function (id, user) {
+			console.log("ADDED: "+ Players.find({quiz: 'quiz' }).count() + " stanno eseguendo il quiz");
+			}
+		
+});
 
 Meteor.methods({
   	all_players_color: function (id, color) {
@@ -48,22 +106,9 @@ Meteor.methods({
 	
 
 	quiz: function () {
+	
 			console.log("Click lavagna da "+ Session.get('user_id'));
 			
-	
-		if (Session.get("mode") === "login") {
-    		console.log("Ti devi loggare");
-  		} else {
-  			Meteor.call('setupQuiz', [Session.get('user_id')]);
-      		console.log("Setup Quiz");
-    	
-    		
-    		AntiModals.overlay('quiz_template', {
-      			modal: true,
-      		});
-      		
-    	}	
-    	
     }
     
     
@@ -101,6 +146,26 @@ UI.body.helpers({
 
 // events on the dialog with lots of buttons
 UI.body.events({
+  "click #start_quiz": function(e, t) {
+		if (Session.get("mode") != "login") {
+			if (Alerts.findOne({name: 'quiz'}).value == false ) {	
+    	
+    			Alerts.update(
+    						{ _id: 'quiz_id' }, 
+    						{ $set: //consente di modificare sono il parametro selezionato 
+    							{
+    								value: true, 
+    							}
+    						}
+    			);
+
+  				console.log('Start_quiz');
+  			}
+  		}else{
+  			alert("ti devi loggare");
+  		};
+       
+  },	
   "click #prova": function(e, t) {
   		console.log('Prova');
   		Players.update(
@@ -221,4 +286,5 @@ Template.quiz_template.events({
   		console.log('Esci_quiz');
        
   },
+  
 });

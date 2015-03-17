@@ -1,23 +1,36 @@
 
 Alerts = new Meteor.Collection("alerts");
 
+Alerts.allow({
+  
+  update: function (userId, doc, fieldNames, modifier) {
+   
+    return true;
+  }
+  
+  
+});
+
+
+
 Players = new Meteor.Collection("players");
 
 Players.allow({
-  insert: function () {
+  insert: function (userId, doc) {
   
     return true;
   },
-  update: function () {
+  update: function (userId, doc, fieldNames, modifier) {
    
     return true;
   },
-  remove: function () {
+  remove: function (userId, doc) {
     
     return true;
   }
   
 });
+
 
 
 

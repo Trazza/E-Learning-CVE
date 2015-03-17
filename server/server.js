@@ -1,38 +1,59 @@
-
-
-
-/*
-var num_players_quiz = Players.find({quiz: 'quiz' }).count();
-var handle_quiz_server = num_players_quiz.observeChanges({
-	if (Players.find({quiz: 'quiz' }).count() == 0) {
-		Alerts.update(
-    					{ _id: 'quiz_id' }, 
-    					{ $set: //consente di modificare sono il parametro selezionato 
-    						{
-    							value: false, 
-    						}
-    					}
-    				)
-	}
+Meteor.publish("players", function () {
+  return Players.find({});
 });
+
+Meteor.publish("alerts", function () {
+  return Alerts.find({});
+});
+
+
+
+
+
+if (Meteor.isServer) {
+/*
+var on_players_quiz = Players.find({});
+
+
+var handle_quiz_server = on_players_quiz.observeChanges({
+	removed: function () {
+			console.log(Players.find({quiz: 'quiz' }).count() + " stanno eseguendo il quiz");
+			},
+	added: function (id, user) {
+			console.log(Players.find({quiz: 'quiz' }).count() + " stanno eseguendo il quiz");
+			}
+		
+
+	
+});
+
 
 */
 
-if (Meteor.isServer) {
+
 
 	Meteor.methods({
-	
 		
-		setupQuiz: function (user_id) {
-			console.log("Server quiz da: " + user_id);
+		
+		/*
+	
+		startQuiz: function (userId){
+			console.log("startQuiz --> " + userId);
 			return Players.update(
-    					{ _id: user_id}, 
+    					{ _id: userId}, 
     					{ $set: //consente di modificare sono il parametro selezionato 
     						{
     							quiz: 'quiz', 
     						}
     					}
-    	);
+    				);
+			},
+		*/
+		quiz: function () {
+			//console.log("Server quiz da: " + user_id);
+			/*
+			
+    				*/
     	},
 		
 		
@@ -53,9 +74,7 @@ if (Meteor.isServer) {
   			
   		},
 	
-		quiz: function () {
-    		
-    	}
+		
     });
 
 
