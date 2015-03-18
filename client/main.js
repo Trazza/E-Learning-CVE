@@ -53,6 +53,8 @@ var handle_quiz_for_all = quiz_for_all.observeChanges({
 				console.log("ALERT: '"+ user.name + "' --> è stato attivato");
 				if (typeof(Session.get('user_id')) != 'undefined') {
 					
+					console.log("Update Player.quiz to 'quiz'...");
+					console.log("1) Players.findOne(Session.get('user_id')).quiz = "+ Players.findOne(Session.get('user_id')).quiz);
 					Players.update(
     						{ _id: Session.get('user_id') }, 
     						{ $set: //consente di modificare sono il parametro selezionato 
@@ -61,7 +63,8 @@ var handle_quiz_for_all = quiz_for_all.observeChanges({
     							}
     						}
     				);
-				
+					console.log("2) Players.findOne(Session.get('user_id')).quiz = "+ Players.findOne(Session.get('user_id')).quiz);
+					console.log("finestra modale...");
 					AntiModals.overlay('quiz_template', {
       					modal: true,
       				});
@@ -78,18 +81,6 @@ var handle_quiz_server = on_players_quiz.observeChanges({
 	removed: function () {
 				console.log("REMOVED: "+Players.find({quiz: 'quiz' }).count() + " stanno eseguendo il quiz ");
 			
-			
-				if (Players.find({quiz: 'quiz' }).count() == 0) {
-					console.log('Imposto valore Alert ->quiz = false ');
-					Alerts.update(
-    					{ _id: 'quiz_id' }, 
-    					{ $set: //consente di modificare sono il parametro selezionato 
-    						{
-    							value: false, 
-    						}
-    					}
-    				);
-				}
 				
 			},
 	added: function (id, user) {
@@ -149,7 +140,8 @@ UI.body.events({
   "click #start_quiz": function(e, t) {
 		if (Session.get("mode") != "login") {
 			if (Alerts.findOne({name: 'quiz'}).value == false ) {	
-    	
+    			console.log("1) Start_quiz: Alerts.findOne(quiz_id).value = "+ Alerts.findOne('quiz_id').value);
+    			console.log("Update Alert.quiz.value to 'true'...");
     			Alerts.update(
     						{ _id: 'quiz_id' }, 
     						{ $set: //consente di modificare sono il parametro selezionato 
@@ -159,7 +151,7 @@ UI.body.events({
     						}
     			);
 
-  				console.log('Start_quiz');
+  				console.log("2) Start_quiz: Alerts.findOne(quiz_id).value = "+ Alerts.findOne('quiz_id').value);
   			}
   		}else{
   			alert("ti devi loggare");
@@ -272,7 +264,7 @@ UI.body.events({
 
 Template.quiz_template.events({
 	"click #esci_quiz": function(e, t) {
-			
+		console.log("Update Player.quiz to 'null'...");
     	Players.update(
     					{ _id: Session.get('user_id') }, 
     					{ $set: //consente di modificare sono il parametro selezionato 
@@ -283,8 +275,24 @@ Template.quiz_template.events({
     	)
     	
     	 AntiModals.dismissAll();
-  		console.log('Esci_quiz');
-       
+  		
+  		if (Players.find({quiz: 'quiz' }).count() == 0) {
+					console.log("Players.find({quiz: 'quiz' }).count() == "+ Players.find({quiz: 'quiz' }).count());
+					console.log("1) Alerts.findOne('quiz_id').value = "+ Alerts.findOne('quiz_id').value);
+					console.log("Update Alert.quiz.value to 'false'...");
+					
+					Alerts.update(
+    					{ _id: 'quiz_id' }, 
+    					{ $set: //consente di modificare sono il parametro selezionato 
+    						{
+    							value: false, 
+    						}
+    					}
+    				);
+    				console.log("2) Alerts.findOne('quiz_id').value = "+ Alerts.findOne('quiz_id').value);
+				}
+				
+       console.log('Esci_quiz');
   },
   
 });
