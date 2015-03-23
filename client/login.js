@@ -36,14 +36,18 @@ Template.temporary_login.events({
 				Session.set("user_id", user_id); 
 				
 				 //posizione iniziale del player
+				var y_view = "2.5";
+				var fp_view = "0";
  				var x = "3";
- 				var y = "1";
- 				var z = "1";
+ 				var y = "0";
+ 				var z = "0";
  				var color = Random.choice(colors[Session.get("color")]);
 				
 				Players.insert({  	//inserisco nome utente e id nella collection
  	        		nome: username,
     	      		_id: user_id,
+    	      		y_view: y_view,
+    	      		fp_view: fp_view,
     	      		x: x,
     	      		y: y,
     	      		z: z,

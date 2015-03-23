@@ -18,6 +18,7 @@ Session.set("mode", "login");
 
 
 Tracker.autorun(function () {
+
   Meteor.subscribe("players");
   Meteor.subscribe("alerts");
   //console.log(Players.find({quiz: 'quiz' }).count() + " stanno eseguendo il quiz");
@@ -95,7 +96,7 @@ Meteor.methods({
   		document.getElementById(id+'__Legs').setAttribute('diffuseColor', color);
   	},
 	
-
+	
 	quiz: function () {
 	
 			console.log("Click lavagna da "+ Session.get('user_id'));
@@ -253,6 +254,48 @@ UI.body.events({
 					
 				case 67: // C
 					
+					break;
+					
+				// VIEWPOINT FIRST PERSON	
+				case 81: // Q
+					fp_view = String(parseFloat(Players.findOne(Session.get('user_id')).fp_view) + 0.1); 
+    				Players.update(
+    					{ _id: Session.get('user_id') }, 
+    					{ $set: //consente di modificare sono il parametro selezionato 
+    						{
+    							fp_view: fp_view, 
+    						}
+    					}
+    				)	
+					break;
+					
+				case 65: // A
+					fp_view = String(parseFloat(Players.findOne(Session.get('user_id')).fp_view) - 0.1); 
+    				Players.update(
+    					{ _id: Session.get('user_id') }, 
+    					{ $set: //consente di modificare sono il parametro selezionato 
+    						{
+    							fp_view: fp_view, 
+    						}
+    					}
+    				)	
+					break;
+				// VIEWPOINT		
+				case 80: // P  (prima persona)
+						
+						document.getElementById('first-person'+Session.get('user_id')).setAttribute('set_bind','true');
+						document.getElementById('viewpoint_1').setAttribute('set_bind','false');
+						document.getElementById('nav_id').setAttribute('type','lookAround');
+						document.getElementById('nav_id').setAttribute('explorationMode','zoom');
+						
+						
+					break;
+					
+				case 79: // O  (dall'alto)
+						
+						document.getElementById('viewpoint_1').setAttribute('set_bind','true');
+						document.getElementById('nav_id').setAttribute('type','none');
+						
 					break;
 			
 			}	
