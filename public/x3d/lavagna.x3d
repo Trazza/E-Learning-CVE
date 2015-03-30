@@ -95,7 +95,7 @@
 							<Appearance>
 							
 							<!--  texure per la scritta sulla lavagna ******************************************************************************* -->
-							<!-- <ImageTexture url='../texture/wood.jpg'/>  -->
+								<ImageTexture id='scrivi_lavagna' url='../img/quiz.jpg'/>
 								<Material 	id="MA_Molbert"
 											DEF="MA_Molbert"
 								          diffuseColor="1 0 0"

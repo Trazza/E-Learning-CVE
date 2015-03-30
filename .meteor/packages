@@ -9,3 +9,6 @@ standard-app-packages
 anti:fake
 anti:modals
 less
+tomi:upload-jquery
+tomi:upload-server
+ian:bootstrap-3

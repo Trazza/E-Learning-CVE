@@ -4,8 +4,10 @@
 </head>
 
 <body>
+	
 	<!-- floating UI box -->
 	<div class="ui">
+		
 		<button id='start_quiz' type="button">Quiz</button><br><br>
 		<button id='prova' type="button">Prova!</button>
 		
@@ -46,7 +48,7 @@
 	  		intensity="0.8" shadowIntensity="0.4"></directionalLight>
 	  		
 	  		
-	  	<!-- house -->
+	  	<!-- house 
 	  	<directionalLight direction="0 -1 0" ></directionalLight>
         <transform rotation='-1 0 0 1.5708'>
             <shape>
@@ -56,8 +58,9 @@
                 </indexedFaceSet>
             </shape>
         </transform>	
+        -->
 	  	
-	  	<!-- ground
+	  	<!-- ground-->
 	  	<transform rotation="-1.5707963267948966 0 0 1.5707963267948966">
 		  	<shape>
 		  		<appearance>
@@ -67,16 +70,19 @@
 			  	<plane size="20 20"></plane>
 			  </shape>
 			</transform>
-		 -->
+		 
 
 		<transform DEF="lavagna" id="lavagna_id" translation="0 2 0" scale="0.1 0.1 0.1" rotation="0 1 0 -1.5708">
        	 		<inline nameSpaceName="lavagna" 
             			mapDEFToID="true"
-            			onclick='Meteor.call("quiz");' 
+            			
+            			onclick='Meteor.call("finestra");' 
                   	 	url="/x3d/lavagna.x3d">
                   	 
            		</inline>
      	</transform>
+     	
+     	<!-- Tanle 
      	<ProximitySensor id="table_sensor_id" enabled="true" center="3 0 -10" size="3 3 3"></ProximitySensor> 
      	<transform DEF="wood_table" id="wood_table_id" translation="3 0 -10" scale="1 1 1" rotation="0 1 0 -1.5708">
        	 		<inline nameSpaceName="wood_table" 
@@ -84,7 +90,8 @@
                   	 	url="/x3d/wood_table.x3d">
                   	 
            		</inline>
-     		</transform>		
+     	</transform>		
+     	-->
 			
 	  	<group id="all_players">
 	    {{#each players}}
@@ -121,26 +128,6 @@
 
 
 
-<template name="quiz_template"> 
-  <div class="anti-modal-box">
-    <div class="anti-modal-header">
-      <div class="anti-modal-title">Quiz!</div>
-      <div class="anti-modal-closer">&times;</div>
-    </div>
-    <div class="anti-modal-body">
-     <form action="">
-		<fieldset>
-			<legend>Domanda</legend><br>
- 			<input type="checkbox" name="html" value="html"/> A. Sono bello
-			 <br /> 
- 			<input type="checkbox" name="css" value="css"/> B. Sono snello 
-		</fieldset>
-		
-		<button id='esci_quiz' type="button">Esci</button>
-	</form>
-    </div>
-  </div>
-</template>
 
 
 

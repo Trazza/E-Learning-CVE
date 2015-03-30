@@ -1,0 +1,23 @@
+<template name="personalize">
+
+  	 <h3>Scegli la tua immagine</h3>
+  	 
+    {{> upload_template}}
+  	{{> upload_template_view}}
+  	
+</template>
+
+
+<template name="personalize_modalView"> 
+  <div class="anti-modal-box">
+    <div class="anti-modal-header">
+      <div class="anti-modal-title">Personalizza</div>
+      <!--<div class="anti-modal-closer">&times;</div>  "X" -->
+    </div>
+    <div class="anti-modal-body">
+     	{{> personalize}}
+     	<br/>
+     	<button id='esci' type="button">Esci</button>
+    </div>
+  </div>
+</template>

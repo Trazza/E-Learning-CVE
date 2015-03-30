@@ -1,3 +1,22 @@
+Objects = new Meteor.Collection("objects");
+
+Objects.allow({
+  insert: function (userId, doc) {
+  
+    return true;
+  },
+  update: function (userId, doc, fieldNames, modifier) {
+   
+    return true;
+  },
+  remove: function (userId, doc) {
+    
+    return true;
+  }
+  
+});
+
+
 
 Alerts = new Meteor.Collection("alerts");
 
@@ -33,4 +52,21 @@ Players.allow({
 
 
 
+Uploads = new Meteor.Collection('uploads');
+
+Uploads.allow({
+  insert: function (userId, doc) {
+  
+    return true;
+  },
+  update: function (userId, doc, fieldNames, modifier) {
+   
+    return true;
+  },
+  remove: function (userId, doc) {
+    
+    return true;
+  }
+  
+});
 

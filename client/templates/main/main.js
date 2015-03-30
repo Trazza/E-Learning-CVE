@@ -18,35 +18,29 @@ Session.set("mode", "login");
 
 
 Tracker.autorun(function () {
-
-  Meteor.subscribe("players");
-  Meteor.subscribe("alerts");
+	Meteor.subscribe('uploads');
+	Meteor.subscribe("objects");
+  	Meteor.subscribe("players");
+  	Meteor.subscribe("alerts");
   //console.log(Players.find({quiz: 'quiz' }).count() + " stanno eseguendo il quiz");
 });
 
-/*
-var active_quiz = Alerts.findOne('quiz_id').value;
-var handle_active_quiz = active_quiz.observeChanges({
-	if (active_quiz == true) {
+// --------------LAVAGNA --------------------------------------------------------------------------------------------------------------------------
+var personalize = Objects.find();
+var handle_personalize = personalize.observeChanges({
+	changed: function (id, user) {
+	
+				console.log("OBJECT: '"+ user.name + "' --> è stato modificato");
+				document.getElementById('lavagna__scrivi_lavagna').setAttribute('url', Objects.findOne('lavagna_id').path);
+				
+			},
+	
 		
-		Players.update(
-    					{ _id: Session.get('user_id') }, 
-    					{ $set: //consente di modificare sono il parametro selezionato 
-    						{
-    							quiz: 'quiz', 
-    						}
-    					}
-    	)
-    	
-    	//Meteor.call('quiz');
-    	AntiModals.overlay('quiz_template', {
-      			modal: true,
-      		});
-	}
 });
 
-*/
 
+
+// -------------- QUIZ ------------------------------------------------------------------------------------------------------------------------------------------
 var quiz_for_all = Alerts.find({value: true});
 var handle_quiz_for_all = quiz_for_all.observeChanges({
 	added: function (id, user) {
@@ -90,22 +84,7 @@ var handle_quiz_server = on_players_quiz.observeChanges({
 		
 });
 
-Meteor.methods({
-  	all_players_color: function (id, color) {
-  		console.log(id+' '+color);
-  		document.getElementById(id+'__Legs').setAttribute('diffuseColor', color);
-  	},
-	
-	
-	quiz: function () {
-	
-			console.log("Click lavagna da "+ Session.get('user_id'));
-			
-    }
-    
-    
-});
-
+// ------------------------------------------------------------------------------------------------------------------------------------------
 
 
 
@@ -138,8 +117,10 @@ UI.body.helpers({
 
 // events on the dialog with lots of buttons
 UI.body.events({
-  "click #start_quiz": function(e, t) {
-		if (Session.get("mode") != "login") {
+  "click #start_quiz": function() {
+		// le funzioni da Meteor.method non modificando le collection (da risolvere!!!!!)
+		//Meteor.call('start_quiz');
+       if (Session.get("mode") != "login") {
 			if (Alerts.findOne({name: 'quiz'}).value == false ) {	
     			console.log("1) Start_quiz: Alerts.findOne(quiz_id).value = "+ Alerts.findOne('quiz_id').value);
     			console.log("Update Alert.quiz.value to 'true'...");
@@ -157,18 +138,11 @@ UI.body.events({
   		}else{
   			alert("ti devi loggare");
   		};
-       
   },	
   "click #prova": function(e, t) {
-  		console.log('Prova');
-  		Players.update(
-    					{ _id: Session.get('user_id') }, 
-    					{ $set: //consente di modificare sono il parametro selezionato 
-    						{
-    							quiz: 'quiz', 
-    						}
-    					}
-    		)
+  		console.log('start quiz');
+  		Meteor.call('set_quiz');
+  		
        
   },
 	
@@ -305,37 +279,3 @@ UI.body.events({
 
 
 
-Template.quiz_template.events({
-	"click #esci_quiz": function(e, t) {
-		console.log("Update Player.quiz to 'null'...");
-    	Players.update(
-    					{ _id: Session.get('user_id') }, 
-    					{ $set: //consente di modificare sono il parametro selezionato 
-    						{
-    							quiz: null, 
-    						}
-    					}
-    	)
-    	
-    	 AntiModals.dismissAll();
-  		
-  		if (Players.find({quiz: 'quiz' }).count() == 0) {
-					console.log("Players.find({quiz: 'quiz' }).count() == "+ Players.find({quiz: 'quiz' }).count());
-					console.log("1) Alerts.findOne('quiz_id').value = "+ Alerts.findOne('quiz_id').value);
-					console.log("Update Alert.quiz.value to 'false'...");
-					
-					Alerts.update(
-    					{ _id: 'quiz_id' }, 
-    					{ $set: //consente di modificare sono il parametro selezionato 
-    						{
-    							value: false, 
-    						}
-    					}
-    				);
-    				console.log("2) Alerts.findOne('quiz_id').value = "+ Alerts.findOne('quiz_id').value);
-				}
-				
-       console.log('Esci_quiz');
-  },
-  
-});

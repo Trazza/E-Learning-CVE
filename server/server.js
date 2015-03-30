@@ -1,3 +1,11 @@
+Meteor.publish("objects", function () {
+  return Objects.find({});
+});
+
+Meteor.publish("uploads", function () {
+  return Uploads.find({});
+});
+
 Meteor.publish("players", function () {
   return Players.find({});
 });
@@ -11,6 +19,15 @@ Meteor.publish("alerts", function () {
 
 
 if (Meteor.isServer) {
+	
+	Meteor.methods({
+		uploadInsert: function(fileInfo){
+			console.log(fileInfo);
+  			return Uploads.insert(fileInfo);;
+  		},
+
+	});
+
 /*
 var on_players_quiz = Players.find({});
 
@@ -28,63 +45,34 @@ var handle_quiz_server = on_players_quiz.observeChanges({
 });
 
 
+
+
+
 */
 
-
-
-	Meteor.methods({
-		
-		
-		/*
-	
-		startQuiz: function (userId){
-			console.log("startQuiz --> " + userId);
-			return Players.update(
-    					{ _id: userId}, 
-    					{ $set: //consente di modificare sono il parametro selezionato 
-    						{
-    							quiz: 'quiz', 
-    						}
-    					}
-    				);
-			},
-		*/
-		quiz: function () {
-			//console.log("Server quiz da: " + user_id);
-			/*
-			
-    				*/
-    	},
-		
-		
-		
-		insertQuiz: function(){
-			Alerts.insert({
-				_id: "quiz_id",
-				name: "quiz",
-				value: false
-			});
-		},
-
-		removeAllPlayers: function() {
-			return Players.remove({});
-		},
-
-		all_players_color: function (id, color) {
-  			
-  		},
-	
-		
-    });
-
-
 	Meteor.startup(function() {
+	
+	
+		// Lavagna
+		if (typeof(Objects.findOne('lavagna_id')) == 'undefined'){
+			console.log("Lavagna NON definito: "+ Objects.findOne('quiz_id'));
+			Meteor.call('insertObject', 'lavagna_id', 'lavagna');
+			
+		} else {
+			console.log("Oggetto Lavagna DEFINITO: nome = " + Objects.findOne('lavagna_id').name);
+		}
+		
+	
+	
+	
 		if (typeof(Alerts.findOne('quiz_id')) == 'undefined'){
 			console.log("Quiz NON definito: "+ Alerts.findOne('quiz_id'));
 			Meteor.call('insertQuiz');
 			
 		}else{
+			Meteor.call('setQuiz');
 			console.log("Quiz DEFINITO: nome = " + Alerts.findOne('quiz_id').name + " valore = " +Alerts.findOne('quiz_id').value);
+			
 		} 
 		console.log("Meteor restart ");
 
