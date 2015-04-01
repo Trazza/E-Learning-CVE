@@ -18,6 +18,7 @@ Meteor.publish("alerts", function () {
 
 
 
+
 if (Meteor.isServer) {
 	
 	Meteor.methods({
@@ -25,6 +26,21 @@ if (Meteor.isServer) {
 			console.log(fileInfo);
   			return Uploads.insert(fileInfo);;
   		},
+  		
+  		changeImgLavagna: function(path){
+    			
+    			console.log('set Lavagna img');
+    			
+    			return Objects.update(
+    						{ _id: 'lavagna_id' }, 
+    						{ $set: //consente di modificare sono il parametro selezionato 
+    							{
+    								img_path: path, 
+    							}
+    						}
+    			);
+    
+    	},
 
 	});
 
@@ -55,7 +71,7 @@ var handle_quiz_server = on_players_quiz.observeChanges({
 	
 		// Lavagna
 		if (typeof(Objects.findOne('lavagna_id')) == 'undefined'){
-			console.log("Lavagna NON definito: "+ Objects.findOne('quiz_id'));
+			console.log("Lavagna NON definito: "+ Objects.findOne('lavagna_id'));
 			Meteor.call('insertObject', 'lavagna_id', 'lavagna');
 			
 		} else {

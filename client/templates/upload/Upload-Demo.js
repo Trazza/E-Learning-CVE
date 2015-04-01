@@ -10,12 +10,12 @@ if (Meteor.isClient) {
 
   Template.upload_template_view.events({
   
-  	'click #set_img_id':function() {
+  	'click .set_img_id':function() {
     	console.log('Img ID: '+ this._id + '; nome: '+ this.name +'; path: '+ this.path );
-    	document.getElementById('lavagna__scrivi_lavagna').setAttribute('url', '/uploads/'+this.path);
-    	Meteor.call('set_lavagna_img', this.path);
+    	//document.getElementById('lavagna__img_lavagna').setAttribute('url', '/uploads/'+this.path);
+    	Meteor.call('changeImgLavagna', this.path);
     	AntiModals.dismissAll();
-    	//console.log(document.getElementById('lavagna__scrivi_lavagna').getAttribute('url'));
+    	//console.log(document.getElementById('lavagna__img_lavagna').getAttribute('url'));
     	
     	
   	},

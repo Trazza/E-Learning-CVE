@@ -28,9 +28,10 @@
 				<Group DEF="group_ME_Mesh_Default">
 					<Shape>
 						<Appearance>
+						<!-- LEGs -->
 							<Material id="Legs"
 									  DEF="Legs"
-							          diffuseColor="1 1 0"
+							          diffuseColor="0 0 1"
 							          specularColor="0.401 0.401 0.401"
 							          emissiveColor="0.000 0.000 0.000"
 							          ambientIntensity="0.333"
@@ -51,6 +52,7 @@
 					</Shape>
 					<Shape>
 						<Appearance>
+							<!-- TESTA -->
 							<Material DEF="MA_Head"
 							          diffuseColor="0.640 0.640 0.640"
 							          specularColor="0.401 0.401 0.401"
@@ -91,6 +93,7 @@
 					</Shape>
 					<Shape>
 						<Appearance>
+							<!-- CINTURA -->
 							<Material DEF="MA_Waist"
 							          diffuseColor="0.640 0.640 0.640"
 							          specularColor="0.401 0.401 0.401"
@@ -111,8 +114,9 @@
 					</Shape>
 					<Shape>
 						<Appearance>
+							<!-- BUSTO -->
 							<Material DEF="MA_Chest"
-							          diffuseColor="0.640 0.640 0.640"
+							          diffuseColor="0 0 1"
 							          specularColor="0.401 0.401 0.401"
 							          emissiveColor="0.000 0.000 0.000"
 							          ambientIntensity="0.333"
@@ -131,8 +135,9 @@
 					</Shape>
 					<Shape>
 						<Appearance>
+						 <!-- BRACCIA -->
 							<Material DEF="MA_Arms"
-							          diffuseColor="0.640 0.640 0.640"
+							          diffuseColor="0 0 1"
 							          specularColor="0.401 0.401 0.401"
 							          emissiveColor="0.000 0.000 0.000"
 							          ambientIntensity="0.333"

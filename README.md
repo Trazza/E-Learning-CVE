@@ -1,4 +1,4 @@
-Da risolvere
+Da risolvere   
 
 - Se si refresha la pagina si perde la variabile di sessione (e di conseguenza il contatto con l'avatar)
-- quando avviene l'upload si refresha la pagina ed esce dalle finestre modali (e quindi si perde la variabile di sessione)
+- quando si fa l'upload si refresha la la pagina in quanto si riavvia il server (qualsiasi modifica sul server scatena il riavvio)

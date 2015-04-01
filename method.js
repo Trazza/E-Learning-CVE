@@ -18,20 +18,16 @@ if (Meteor.isClient) {
 			
     	},
     	
-    	set_lavagna_img: function(path){
-    			
-    			console.log('set Lavagna img');
-    			
-    			return Objects.update(
-    						{ _id: 'lavagna_id' }, 
-    						{ $set: //consente di modificare sono il parametro selezionato 
-    							{
-    								path: path, 
-    							}
-    						}
-    			);
-    
+    	setImgLavagna: function () {
+    		window.setTimeout( function () {
+					var img_path = Objects.findOne('lavagna_id').img_path;
+					console.log('img_path = '+ img_path);
+					document.getElementById('lavagna__img_lavagna').setAttribute('url', '/uploads/'+img_path);
+					}, 2000 );
+			
     	},
+    	
+    	
     
     
     	set_quiz: function(){
@@ -109,6 +105,9 @@ if (Meteor.isServer) {
   			return Items.find().count();
   		},
 		
+		
+		
+		
 		/*
 	
 		startQuiz: function (userId){
@@ -127,7 +126,7 @@ if (Meteor.isServer) {
 			Objects.insert({
 				_id: id,
 				name: name,
-				path: null
+				img_path: '/img/quiz.jpg'
 			});
 		},
 		

@@ -31,7 +31,7 @@ var handle_personalize = personalize.observeChanges({
 	changed: function (id, user) {
 	
 				console.log("OBJECT: '"+ user.name + "' --> è stato modificato");
-				document.getElementById('lavagna__scrivi_lavagna').setAttribute('url', Objects.findOne('lavagna_id').path);
+				Meteor.call('setImgLavagna');
 				
 			},
 	

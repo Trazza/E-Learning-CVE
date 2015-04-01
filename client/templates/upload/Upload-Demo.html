@@ -5,21 +5,21 @@
 
 <template name="upload_template">
   	 <h3>Images</h3>
-    {{> upload_bootstrap fileTypes='.jpg' multiple=true }}
+    {{> upload_bootstrap fileTypes='.png,.jpg'  multiple=true }}
 </template>
 
 <template name="upload_template_view">
   	 <h3>Images uploaded</h3>
-  	<!-- <a href="/uploads/quiz3.jpg"><img src="/uploads/quiz3.jpg" width="128" height="128"></a><br/> -->
+  	
    		{{#each uploads}}
 			<li class="documentItem">
 				
-                 <button id='set_img_id' type="button"><img src="/uploads/{{path}}" width="128" height="128"></button><br/>
+                 <button class='set_img_id' type="button"><img src="/uploads/{{path}}" width="128" height="128"></button><br/>
                     <label>{{ name }}</label> <br/>
                     		{{ size }} B<br>
                     {{#if _id}}
                         <a class="btn btn-danger deleteUpload">Delete</a><br/>
-                	 <!-- <a class="btn btn-danger clearUpload">Elimina dalla Collection (for bug)</a> -->
+                	<a class="btn btn-danger clearUpload">Elimina dalla Collection (for bug)</a> 
                     {{/if}}
             </li> 
 		

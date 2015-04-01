@@ -92,10 +92,10 @@
 				           >
 					<Group DEF="group_ME_group3_pC0">
 						<Shape>
-							<Appearance>
+							<Appearance id='app_img_lavagna'>
 							
 							<!--  texure per la scritta sulla lavagna ******************************************************************************* -->
-								<ImageTexture id='scrivi_lavagna' url='../img/quiz.jpg'/>
+								<ImageTexture id='img_lavagna' DEF='img_lavagna' url=''/>
 								<Material 	id="MA_Molbert"
 											DEF="MA_Molbert"
 								          diffuseColor="1 0 0"
