@@ -10,11 +10,10 @@ var colors = {
 };
 
 
-// set initial color
-Session.set("color", "brown");
 
-// set initial mode to view
-Session.set("mode", "login");
+Session.set("color", "brown"); // set initial color
+Session.set("mode", "login"); // set initial mode to view
+
 
 
 Tracker.autorun(function () {
@@ -22,8 +21,119 @@ Tracker.autorun(function () {
 	Meteor.subscribe("objects");
   	Meteor.subscribe("players");
   	Meteor.subscribe("alerts");
-  //console.log(Players.find({quiz: 'quiz' }).count() + " stanno eseguendo il quiz");
+  
 });
+
+
+
+// -------------- QUIZ ------------------------------------------------------------------------------------------------------------------------------------------
+
+//Vengono osservate le modifiche sulla collection Alerts
+//Se il valore value passa da false a true viene scatenato l'evento associato 
+
+
+var quiz_for_all = Alerts.find();
+
+var handle_quiz_for_all = quiz_for_all.observeChanges({ 
+	changed: function (id, quiz) { 
+		//verifichiamo il tipo di evento scatenato
+		switch (id){
+			case 'quiz_id':
+				if(quiz.value == true){
+				
+					if (typeof(Session.get('user_id')) != 'undefined') {
+					
+						//
+						console.log('imposta quiz');
+						Meteor.call('setPlayerQuiz', Session.get('user_id'), id );
+						/*
+						AntiModals.overlay('quiz_template', {
+      						modal: true,
+      					});
+      					*/
+      				}
+      			}
+      			break;
+      	}
+	},
+	
+});
+
+//-------->
+var players_quiz = Players.find();
+
+var handle_players_quiz = players_quiz.observeChanges({
+	changed: function (id, user) {
+		if (id == Session.get('user_id')){
+			switch (user.quiz){
+				case 'quiz_id':
+				
+				
+						if (typeof(Session.get('user_id')) != 'undefined') {
+					
+							//Meteor.call('setPlayerQuiz', Session.get('user_id'), "quiz" );	
+							AntiModals.overlay('quiz_template', {
+      							modal: true,
+      						});
+      						console.log('finestramodale');
+      					}
+      		
+      				break;
+      		}
+      	}
+	},
+	
+});
+/*
+var handle_quiz_for_all = quiz_for_all.observeChanges({
+	added: function (id, user) {
+	
+				console.log("ALERT: '"+ user.name + "' --> è stato attivato");
+				if (typeof(Session.get('user_id')) != 'undefined') {
+					
+					console.log("Update Player.quiz to 'quiz'...");
+					console.log("1) Players.findOne(Session.get('user_id')).quiz = "+ Players.findOne(Session.get('user_id')).quiz);
+					
+					//Meteor.call('setPlayerQuiz', Session.get('user_id'), "quiz" );
+					
+					Players.update(
+    						{ _id: Session.get('user_id') }, 
+    						{ $set: //consente di modificare sono il parametro selezionato 
+    							{
+    								quiz: "quiz", 
+    							}
+    						}
+    				);
+    				
+					console.log("2) Players.findOne(Session.get('user_id')).quiz = "+ Players.findOne(Session.get('user_id')).quiz);
+					console.log("finestra modale...");
+					AntiModals.overlay('quiz_template', {
+      					modal: true,
+      				});
+      			}
+			},
+	removed: function () {
+				console.log("ALERT: '"+ user.name + "' --> disattivato");
+			}
+		
+});
+*/
+var on_players_quiz = Players.find({quiz: 'quiz'});
+var handle_quiz_server = on_players_quiz.observeChanges({
+	removed: function () {
+				console.log("REMOVED: "+Players.find({quiz: 'quiz' }).count() + " stanno eseguendo il quiz ");
+			
+				
+			},
+	added: function (id, user) {
+			console.log("ADDED: "+ Players.find({quiz: 'quiz' }).count() + " stanno eseguendo il quiz");
+			}
+		
+});
+
+// ------------------------------------------------------------------------------------------------------------------------------------------
+
+
 
 // --------------LAVAGNA --------------------------------------------------------------------------------------------------------------------------
 var personalize = Objects.find();
@@ -39,52 +149,6 @@ var handle_personalize = personalize.observeChanges({
 });
 
 
-
-// -------------- QUIZ ------------------------------------------------------------------------------------------------------------------------------------------
-var quiz_for_all = Alerts.find({value: true});
-var handle_quiz_for_all = quiz_for_all.observeChanges({
-	added: function (id, user) {
-	
-				console.log("ALERT: '"+ user.name + "' --> è stato attivato");
-				if (typeof(Session.get('user_id')) != 'undefined') {
-					
-					console.log("Update Player.quiz to 'quiz'...");
-					console.log("1) Players.findOne(Session.get('user_id')).quiz = "+ Players.findOne(Session.get('user_id')).quiz);
-					Players.update(
-    						{ _id: Session.get('user_id') }, 
-    						{ $set: //consente di modificare sono il parametro selezionato 
-    							{
-    								quiz: "quiz", 
-    							}
-    						}
-    				);
-					console.log("2) Players.findOne(Session.get('user_id')).quiz = "+ Players.findOne(Session.get('user_id')).quiz);
-					console.log("finestra modale...");
-					AntiModals.overlay('quiz_template', {
-      					modal: true,
-      				});
-      			}
-			},
-	removed: function () {
-				console.log("ALERT: '"+ user.name + "' --> disattivato");
-			}
-		
-});
-
-var on_players_quiz = Players.find({quiz: 'quiz'});
-var handle_quiz_server = on_players_quiz.observeChanges({
-	removed: function () {
-				console.log("REMOVED: "+Players.find({quiz: 'quiz' }).count() + " stanno eseguendo il quiz ");
-			
-				
-			},
-	added: function (id, user) {
-			console.log("ADDED: "+ Players.find({quiz: 'quiz' }).count() + " stanno eseguendo il quiz");
-			}
-		
-});
-
-// ------------------------------------------------------------------------------------------------------------------------------------------
 
 
 
@@ -117,6 +181,8 @@ UI.body.helpers({
 
 // events on the dialog with lots of buttons
 UI.body.events({
+
+	/*
   "click #start_quiz": function() {
 		// le funzioni da Meteor.method non modificando le collection (da risolvere!!!!!)
 		//Meteor.call('start_quiz');
@@ -145,10 +211,12 @@ UI.body.events({
   		
        
   },
+  
 	
   "click .clear-boxes": function () {
     Meteor.call("clearBoxes");
   },
+  */
   "click .swatch": function () {
     Session.set("color", this.name);
   },

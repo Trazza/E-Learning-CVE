@@ -27,22 +27,29 @@ Template.temporary_login.events({
     	if (username.replace(/ /g, '') == "") {  //verifico che il nome non sia una sequenza di spazi
     		alert("inserisci username");
     	} else {
+    		// l'id temporaneo è costruito dall'username eliminando gli spazzi e aggiungendo '_id' in coda
     		var user_id = username.replace(/ /g, '')+ "_id";
     		if (typeof(Players.findOne(user_id)) != 'undefined'){
     			alert('utente ESISTENTE');
     		}else{;
-				Session.set("mode", "scenaMode");
+				Session.set("mode", "scenaMode"); //si cambia il template 
 				Session.set("utente", username); 
 				Session.set("user_id", user_id); 
 				
-				 //posizione iniziale del player
+				 //posizione iniziale della videocamera first-person
 				var y_view = "2.5";
 				var fp_view = "0";
+				//posizione iniziale player
  				var x = "3";
  				var y = "0";
  				var z = "0";
  				var color = Random.choice(colors[Session.get("color")]);
 				
+				
+				Meteor.call('insertPlayer', user_id, username, x, y, z, color, y_view, fp_view);
+				
+				
+				/*
 				Players.insert({  	//inserisco nome utente e id nella collection
  	        		nome: username,
     	      		_id: user_id,
@@ -54,7 +61,7 @@ Template.temporary_login.events({
     	      		color: color,
     	      		quiz: null
         		});
-			
+				*/
 			}
        	}
        	
@@ -72,7 +79,9 @@ Template.temporary_login.events({
 		Session.set("mode", "login");
 		Session.set("utente", "Non sei loggato");
 		$("#nome_utente_log").empty();
-		Players.remove(Session.get('user_id'));
+		
+		Meteor.call('removePlayer',Session.get('user_id'));
+		//Players.remove(Session.get('user_id'));
       
        
       }

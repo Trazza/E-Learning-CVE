@@ -1,3 +1,7 @@
+
+
+
+
 Template.finestra_template.events({
 	"click #esci": function(e, t) {
 
@@ -8,9 +12,11 @@ Template.finestra_template.events({
   	"click #quiz": function(e, t) {
 		AntiModals.dismissAll();
     	if (Session.get("mode") != "login") {
-			if (Alerts.findOne({name: 'quiz'}).value == false ) {	
-    			console.log("1) Start_quiz: Alerts.findOne(quiz_id).value = "+ Alerts.findOne('quiz_id').value);
-    			console.log("Update Alert.quiz.value to 'true'...");
+			if (Alerts.findOne({name: 'quiz'}).value == false ) {
+				
+    			
+    			Meteor.call('setAlert', 'quiz_id', true);  //modificando il parametro value =true viene scatenato l'evento "quiz" su tutti i client
+    			/*
     			Alerts.update(
     						{ _id: 'quiz_id' }, 
     						{ $set: //consente di modificare sono il parametro selezionato 
@@ -19,8 +25,9 @@ Template.finestra_template.events({
     							}
     						}
     			);
+    			*/
 
-  				console.log("2) Start_quiz: Alerts.findOne(quiz_id).value = "+ Alerts.findOne('quiz_id').value);
+  				
   			}
   		}else{
   			alert("ti devi loggare");
@@ -39,3 +46,31 @@ Template.finestra_template.events({
   },
   
 });
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
