@@ -14,22 +14,25 @@
 		<h1>E-Learning-CVE</h1>
 		<p class="subtitle">Demo CVE</p>
 		<h2> LISTA PLAYER LOGGATI </h2> 
-	<ul>
-		{{#each players}}
-		
-			<li> {{nome}} ----> {{_id}} -----> {{color}} </li>
-		
-		{{/each}}
-	</ul>	
+			<ul>
+				{{#each allPlayers}}
+					<li style='{{color}}'> {{nome}} -----> {{room}} </li>
+				{{/each}}
+			</ul>	
 		{{#if loginMode}}	
+			
 			{{> temporary_login}}
 		{{else}}
-			
+			{{#each players}}
+					<li style='{{color}}'> {{nome}} </li>
+				{{/each}}
 			{{> temporary_logout}}
 		{{/if}}		
 	</div>
-	
-	
+	<div class='details'>
+		<p> Dettagli (lavori in corso) </p>
+	</div>	
+ <div class='x3ddiv'>	
 <x3d class="{{#if buildMode}}build{{/if}}">
 	  <scene>
 	  	<!-- camera/scene settings -->
@@ -81,7 +84,7 @@
 			  </shape>
 		</transform>
 		 
-		
+		{{#each objects}}
 		<transform DEF="lavagna" id="lavagna_id" translation="0 2 0" scale="0.1 0.1 0.1" rotation="0 1 0 -1.5708">
        	 		<inline nameSpaceName="lavagna" 
             			mapDEFToID="true"
@@ -91,7 +94,7 @@
                   	 
            		</inline>
      	</transform>
-     	
+     	{{/each}}
      	
      	
      	<!-- Tanle 
@@ -130,6 +133,7 @@
 	  
 	  </scene>
 	</x3d>
+	</div>
   
 </body>
 

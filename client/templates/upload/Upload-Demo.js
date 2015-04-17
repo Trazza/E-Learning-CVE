@@ -13,7 +13,7 @@ if (Meteor.isClient) {
   	'click .set_img_id':function() {
     	console.log('Img ID: '+ this._id + '; nome: '+ this.name +'; path: '+ this.path );
     	//document.getElementById('lavagna__img_lavagna').setAttribute('url', '/uploads/'+this.path);
-    	Meteor.call('changeImgLavagna', this.path);
+    	Meteor.call('changeImgLavagna', Session.get('room_id'), this.path);
     	AntiModals.dismissAll();
     	//console.log(document.getElementById('lavagna__img_lavagna').getAttribute('url'));
     	

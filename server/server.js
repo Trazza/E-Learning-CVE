@@ -14,7 +14,9 @@ Meteor.publish("alerts", function () {
   return Alerts.find({});
 });
 
-
+Meteor.publish("rooms", function () {
+  return Rooms.find({});
+});
 
 
 
@@ -22,14 +24,23 @@ Meteor.publish("alerts", function () {
 if (Meteor.isServer) {
 	
 	Meteor.methods({
-	
+		
+		'reset': function(){
+			Meteor.call('removeAllPlayers');
+			Meteor.call('removeAllObjects');
+			Meteor.call('removeAllAlerts');
+			Meteor.call('removeAllRooms');
+  			return;
+  		},	
+
 
 // ------------ PLAYERS -------------------------
 
 	
-		'insertPlayer': function(user_id, username, x, y, z, color, y_view, fp_view){
+		'insertPlayer': function(room_id, user_id, username, x, y, z, color, y_view, fp_view){
 			
   			return Players.insert({  	//inserisco nome utente e id nella collection
+  					room: room_id,
  	        		nome: username,
     	      		_id: user_id,
     	      		y_view: y_view, //posizione della camera
@@ -38,7 +49,7 @@ if (Meteor.isServer) {
     	      		y: y,
     	      		z: z,
     	      		color: color,
-    	      		quiz: null //attività in corso
+    	      		activity: null //attività in corso
         		});
 		},
 			
@@ -52,36 +63,14 @@ if (Meteor.isServer) {
 			return Players.remove({});
 		},
 		
-		
-		'setPlayerQuiz': function(id, quiz) {
-			console.log('setPlayerQuiz: '+ id + ' = '+ quiz);
-			/*
-			if (quiz = null) {
-				Alerts.update(
-						{_id: 'observe'+ quiz},
-						{$inc: 
-							{
-								num_players: -1,
-							}
-						}
-				);
-								
-			} else {
-				Alerts.update(
-						{_id: 'observe'+ quiz},
-						{$inc: 
-							{
-								num_players: +1,
-							}
-						}
-				);
-			}
-			*/
+		//
+		'setPlayerActivity': function(id, activity) {
+			console.log('setPlayerActivity: '+ id + ' = '+ activity);
 			return Players.update(
     					{ _id: id }, 
     					{ $set: //consente di modificare sono il parametro selezionato 
     						{
-    							quiz: quiz, 
+    							activity: activity, 
     						}
     					}
     				)	
@@ -123,10 +112,10 @@ if (Meteor.isServer) {
 	
 // ---------------- ALERTS ---------------
 
-		'setAlert': function(id, value){
-			console.log('setAlert: '+ id + ' = '+ value);
+		'setActivity': function(name, room, value){
+			console.log('setActivity: '+ name + ' = '+ value);
 				return Alerts.update(
-    							{ _id: id }, 
+    							{ name: name, room: room }, 
     							{ $set: //consente di modificare sono il parametro selezionato 
     								{
     									value: value, 
@@ -136,61 +125,44 @@ if (Meteor.isServer) {
     		
 		},
 		
-		'insertQuiz': function(id, name){
-			Meteor.call('observeQuiz', 'observe'+id);
+		'insertActivity': function(name, room){
+			
 			return Alerts.insert({
-				_id: id,
-				name: name,
-				
-				value: false
-			});
+					room: room,
+					name: name,
+					value: false
+				});
 		},
 
 		
-		'observeQuiz': function(id, name){
-			return Alerts.insert({
-				_id: id,
-				num_players: 0
-			});
+		'removeAllAlerts': function() {
+			return Alerts.remove({});
 		},
-
-		
-    	
-    	'startQuiz': function () {
-    			
-    					Alerts.update(	
-    							{ _id: 'quiz_id' }, 
-    							{ $set: //consente di modificare sono il parametro selezionato 
-    								{
-    									value: true, 
-    								}
-    							}
-    					);
- 
-  	  	},	
-	
-	
 	
 	
 	
 	
 // -------------------- OBJECTS -----------------------------------
 	
-		'insertObject': function(id, name){
-			return Objects.insert({
-				_id: id,
-				name: name,
-				img_path: '/img/quiz.jpg'
-			});
+		
+	
+		'insertObject': function(name, room){
+
+				return Objects.insert({
+					room: room,
+					name: name,
+					img_path: '/default_img/quiz.jpg'
+				});
+				
 		},
 		
   		
-  		'changeImgLavagna': function(path){
+  		'changeImgLavagna': function(room, path){
     			
     			console.log('set Lavagna img');
     			
     			return Objects.update(
-    						{ _id: 'lavagna_id' }, 
+    						{ name: 'lavagna', room: room}, 
     						{ $set: //consente di modificare sono il parametro selezionato 
     							{
     								img_path: path, 
@@ -199,39 +171,88 @@ if (Meteor.isServer) {
     			);
     
     	},
+    	
+    	'removeAllObjects': function() {
+			return Objects.remove({});
+		},
+    	
+// ---------------------- ROOMS ---------------------------------
+	
+		'insertRoom': function(id, name){
+			return Rooms.insert({
+				_id: id,
+				name: name
+				
+			}); 
+		},
+    	
+    	'removeAllRooms': function() {
+			return Rooms.remove({});
+		}
 
-	});
+
+
+	}); // fine methods
+	
+	
+	
+
 
 
 
 //------------------------------------------------------------------------------------------------------------------
 	Meteor.startup(function() {
 	
-	
-		// Lavagna
-		if (typeof(Objects.findOne('lavagna_id')) == 'undefined'){
-			console.log("Lavagna NON definito: "+ Objects.findOne('lavagna_id'));
-			Meteor.call('insertObject', 'lavagna_id', 'lavagna');
+		//Per ogni stanza si verifica che siano presenti tutti gli oggetti associati
+		
+		var stanze = Rooms.find({});
+		stanze.forEach(function (room) {
+			console.log('verifico oggetti e attivita: stanza "'+room.name+'"');
+		
+			// Lavagna (object)
+			if (typeof(Objects.findOne({name:'lavagna', room: room._id })) == 'undefined'){
+				console.log("Lavagna NON definito: room = "+ room._id);
+				Meteor.call('insertObject', 'lavagna', room.id);
 			
-		} else {
-			console.log("Oggetto Lavagna DEFINITO: nome = " + Objects.findOne('lavagna_id').name);
-		}
+			} else {
+				console.log("Oggetto Lavagna DEFINITO:  room = "+ room._id);
+			}
 		
 	
 	
-	
-		if (typeof(Alerts.findOne('quiz_id')) == 'undefined'){
-			console.log("Quiz NON definito: "+ Alerts.findOne('quiz_id'));
-			Meteor.call('insertQuiz', 'quiz_id', 'quiz');
-		
-			
-		}else{
-			Meteor.call('setAlert', 'quiz_id', false );
-			console.log("Quiz DEFINITO: nome = " + Alerts.findOne('quiz_id').name + " valore = " +Alerts.findOne('quiz_id').value);
-			
-		} 
-		console.log("Meteor restart ");
+			// Quiz (activity)
+			if (typeof(Alerts.findOne({name: 'quiz', room: room._id})) == 'undefined'){
+				console.log("Quiz NON definito: room = "+ room._id);
+				Meteor.call('insertActivity', 'quiz', room.id);
 
-    });
+			}else{
+				Meteor.call('setActivity', 'quiz', room._id, false );
+				console.log("Quiz DEFINITO: room = "+ room._id);
+			
+			} 
+			
+			
+			
+		});
 
-}
+
+
+
+
+
+    }); //end 'Meteor.startup'  
+
+} //end 'Meteor.isServer'
+
+
+
+
+
+
+
+
+
+
+
+
+

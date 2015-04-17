@@ -16,7 +16,34 @@
 					</div>
 				{{/each}}
 			</div>
-        	
+			
+			<div>
+			<div class="room-list">
+				<h2>Lista ROOM attive</h2>
+				Seleziona una Room:
+				<select id="rooms" name="rooms">
+					<option value="default" selected>No Room selected</option>
+					{{#each rooms}}
+						<option value="{{_id}}">{{name}}</option>
+					{{/each}}
+				</select>
+			
+				<br><br>
+				<button id='prova' type="button">Prova Sessione</button>
+			
+      		</div>
+
+			<div>
+        		<h2>Create ROOM</h2>
+      			Inserisci il nome del Room:
+        		<input type="text" id="room-name" />
+        		<button id='room-button' type="button">Crea</button>
+     		</div>
+     		
+     	</div>
+			<br>
+        	<br>
+			
         	<button class="login-mode btn active" id="login-button">Sign in</button>
      	</div>
   	</form> 
@@ -36,8 +63,16 @@
 
 
 
+<!--		
+		
+		<div class='select-team'>
+				<h2>SELEZIONA IL TEAM</h2>
+				<form action="">
+		 			<button id='team_1' type="button"><img src="/img/team_1.gif" width="64" height="64"><br/><h1>Team 1</h1></button>
+		 			<button id='team_2' type="button"><img src="/img/team_2.png" width="64" height="64"><br/><h1>Team 2</h1></button><br/>
+				</form>
+		</div>
 
 
-
-
+-->
 

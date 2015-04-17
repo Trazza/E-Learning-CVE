@@ -63,6 +63,24 @@ x3d {
 	}
 }
 
+.room-list {
+	max-width: 150px;
+
+	.room-el {
+		
+		display: inline-block;
+		cursor: pointer;
+
+		&:hover {
+			border-color: black;
+		}
+
+		&.active {
+			font-weight: bold;
+		}
+	}
+}
+
 .color-picker {
 	max-width: 150px;
 

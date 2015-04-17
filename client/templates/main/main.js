@@ -21,31 +21,36 @@ Tracker.autorun(function () {
 	Meteor.subscribe("objects");
   	Meteor.subscribe("players");
   	Meteor.subscribe("alerts");
+  	Meteor.subscribe("rooms");
   
 });
 
 
 
-// -------------- QUIZ ------------------------------------------------------------------------------------------------------------------------------------------
+// -------------- Activity ------------------------------------------------------------------------------------------------------------------------------------------
 
 //Vengono osservate le modifiche sulla collection Alerts
-//Se il valore value passa da false a true viene scatenato l'evento associato 
+//Se il valore value passa da false a true viene scatenato l'evento associato (VEDERE: cursor.observeChanges()) 
 
 
-var quiz_for_all = Alerts.find();
+var activity_for_all = Alerts.find();
 
-var handle_quiz_for_all = quiz_for_all.observeChanges({ 
-	changed: function (id, quiz) { 
+var handle_activity_for_all = activity_for_all.observeChanges({ 
+	changed: function (id, activity) { 
+		var activ = Alerts.findOne(id)
+		console.log('change:'+ id + '  activ.name:' + activ.name + ' value:'+ activ.value + ' room:' + activ.room);
+		console.log('Session.get(room_id) = '+ Session.get('room_id'));
+		console.log('activity.room = '+ activ.room);
 		//verifichiamo il tipo di evento scatenato
-		switch (id){
-			case 'quiz_id':
-				if(quiz.value == true){
+		switch (activ.name){
+			case 'quiz':
+				if(activ.value == true){
 				
-					if (typeof(Session.get('user_id')) != 'undefined') {
-					
+					if (typeof(Session.get('user_id')) != 'undefined' && Session.get('room_id') == activ.room) {
+						
 						//
 						console.log('imposta quiz');
-						Meteor.call('setPlayerQuiz', Session.get('user_id'), id );
+						Meteor.call('setPlayerActivity',  Session.get('user_id'), activ.name );
 						/*
 						AntiModals.overlay('quiz_template', {
       						modal: true,
@@ -59,24 +64,23 @@ var handle_quiz_for_all = quiz_for_all.observeChanges({
 	
 });
 
-//-------->
-var players_quiz = Players.find();
-
-var handle_players_quiz = players_quiz.observeChanges({
+// Se il campo 'activity' è modificato, viene scatenato l'evento associato al nome dell'attività impostata
+var players_activity = Players.find();
+var handle_players_activity = players_activity.observeChanges({
 	changed: function (id, user) {
 		if (id == Session.get('user_id')){
-			switch (user.quiz){
-				case 'quiz_id':
+			switch (user.activity){
+				case 'quiz':
 				
 				
-						if (typeof(Session.get('user_id')) != 'undefined') {
+						//if (typeof(Session.get('user_id')) != 'undefined') {
 					
 							//Meteor.call('setPlayerQuiz', Session.get('user_id'), "quiz" );	
 							AntiModals.overlay('quiz_template', {
       							modal: true,
       						});
       						console.log('finestramodale');
-      					}
+      					//}
       		
       				break;
       		}
@@ -84,54 +88,6 @@ var handle_players_quiz = players_quiz.observeChanges({
 	},
 	
 });
-/*
-var handle_quiz_for_all = quiz_for_all.observeChanges({
-	added: function (id, user) {
-	
-				console.log("ALERT: '"+ user.name + "' --> è stato attivato");
-				if (typeof(Session.get('user_id')) != 'undefined') {
-					
-					console.log("Update Player.quiz to 'quiz'...");
-					console.log("1) Players.findOne(Session.get('user_id')).quiz = "+ Players.findOne(Session.get('user_id')).quiz);
-					
-					//Meteor.call('setPlayerQuiz', Session.get('user_id'), "quiz" );
-					
-					Players.update(
-    						{ _id: Session.get('user_id') }, 
-    						{ $set: //consente di modificare sono il parametro selezionato 
-    							{
-    								quiz: "quiz", 
-    							}
-    						}
-    				);
-    				
-					console.log("2) Players.findOne(Session.get('user_id')).quiz = "+ Players.findOne(Session.get('user_id')).quiz);
-					console.log("finestra modale...");
-					AntiModals.overlay('quiz_template', {
-      					modal: true,
-      				});
-      			}
-			},
-	removed: function () {
-				console.log("ALERT: '"+ user.name + "' --> disattivato");
-			}
-		
-});
-*/
-var on_players_quiz = Players.find({quiz: 'quiz'});
-var handle_quiz_server = on_players_quiz.observeChanges({
-	removed: function () {
-				console.log("REMOVED: "+Players.find({quiz: 'quiz' }).count() + " stanno eseguendo il quiz ");
-			
-				
-			},
-	added: function (id, user) {
-			console.log("ADDED: "+ Players.find({quiz: 'quiz' }).count() + " stanno eseguendo il quiz");
-			}
-		
-});
-
-// ------------------------------------------------------------------------------------------------------------------------------------------
 
 
 
@@ -141,7 +97,7 @@ var handle_personalize = personalize.observeChanges({
 	changed: function (id, user) {
 	
 				console.log("OBJECT: '"+ user.name + "' --> è stato modificato");
-				Meteor.call('setImgLavagna');
+				Meteor.call('setImgLavagna', Session.get('room_id'));
 				
 			},
 	
@@ -149,14 +105,24 @@ var handle_personalize = personalize.observeChanges({
 });
 
 
-
+//-------------------------------------------------------------------------------------------------------------------------------------------
 
 
 // this uses the Shark branch of Meteor, hence the UI namespace
 UI.body.helpers({
-
+	allPlayers: function () {
+		
+    	return Players.find({});
+  	},
+  	
+  	objects: function () {
+		
+    	return Objects.find({room: Session.get('room_id')});
+  	},
+	
 	players: function () {
-    	return Players.find();
+		
+    	return Players.find({room: Session.get('room_id')});
   	},
   
   
@@ -182,41 +148,7 @@ UI.body.helpers({
 // events on the dialog with lots of buttons
 UI.body.events({
 
-	/*
-  "click #start_quiz": function() {
-		// le funzioni da Meteor.method non modificando le collection (da risolvere!!!!!)
-		//Meteor.call('start_quiz');
-       if (Session.get("mode") != "login") {
-			if (Alerts.findOne({name: 'quiz'}).value == false ) {	
-    			console.log("1) Start_quiz: Alerts.findOne(quiz_id).value = "+ Alerts.findOne('quiz_id').value);
-    			console.log("Update Alert.quiz.value to 'true'...");
-    			Alerts.update(
-    						{ _id: 'quiz_id' }, 
-    						{ $set: //consente di modificare sono il parametro selezionato 
-    							{
-    								value: true, 
-    							}
-    						}
-    			);
 
-  				console.log("2) Start_quiz: Alerts.findOne(quiz_id).value = "+ Alerts.findOne('quiz_id').value);
-  			}
-  		}else{
-  			alert("ti devi loggare");
-  		};
-  },	
-  "click #prova": function(e, t) {
-  		console.log('start quiz');
-  		Meteor.call('set_quiz');
-  		
-       
-  },
-  
-	
-  "click .clear-boxes": function () {
-    Meteor.call("clearBoxes");
-  },
-  */
   "click .swatch": function () {
     Session.set("color", this.name);
   },
