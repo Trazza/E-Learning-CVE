@@ -21,9 +21,18 @@ Meteor.publish("rooms", function () {
 
 
 
+
+
+
 if (Meteor.isServer) {
-	
+
+
 	Meteor.methods({
+	
+		'prova': function(){
+			console.log(Meteor.user().services.google.name);
+  			return;
+  		},	
 		
 		'reset': function(){
 			Meteor.call('removeAllPlayers');
@@ -32,17 +41,34 @@ if (Meteor.isServer) {
 			Meteor.call('removeAllRooms');
   			return;
   		},	
+  		
+  		
+  		'insertLog': function(){
+  			//var fs = require('fs');
+			var LOG_PATH = '/logFile.txt';
+  			//fs.writeFileSync(LOG_PATH, "Prova log!");
+			console.log(LOG_PATH);
+			
+			var fso = new ActiveXObject("Scripting.FileSystemObject");
+    		var fh = fso.OpenTextFile("/logFile.txt", 8, false, 0);
+    		fh.WriteLine('Prova LOG');
+    		fh.Close();
+    	},
 
+   
 
 // ------------ PLAYERS -------------------------
 
 	
-		'insertPlayer': function(room_id, user_id, username, x, y, z, color, y_view, fp_view){
+		'insertPlayer': function(room_id, x, y, z, color, y_view, fp_view){
+		
+			console.log('nome: '+ Meteor.user().services.google.name);
+			console.log('_id: '+Meteor.userId());
 			
   			return Players.insert({  	//inserisco nome utente e id nella collection
   					room: room_id,
- 	        		nome: username,
-    	      		_id: user_id,
+ 	        		nome: Meteor.user().services.google.name,
+    	      		_id: Meteor.userId(),
     	      		y_view: y_view, //posizione della camera
     	      		fp_view: fp_view,
     	      		x: x,
@@ -51,6 +77,7 @@ if (Meteor.isServer) {
     	      		color: color,
     	      		activity: null //attività in corso
         		});
+        		
 		},
 			
 		'removePlayer': function(id){

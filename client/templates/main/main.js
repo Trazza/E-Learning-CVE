@@ -25,6 +25,12 @@ Tracker.autorun(function () {
   
 });
 
+// ----------- Google account -----------------------------------------
+
+
+
+
+
 
 
 // -------------- Activity ------------------------------------------------------------------------------------------------------------------------------------------
@@ -110,44 +116,42 @@ var handle_personalize = personalize.observeChanges({
 
 // this uses the Shark branch of Meteor, hence the UI namespace
 UI.body.helpers({
-	allPlayers: function () {
-		
+	'allPlayers': function () {
     	return Players.find({});
   	},
   	
-  	objects: function () {
-		
+  	'objects': function () {
     	return Objects.find({room: Session.get('room_id')});
   	},
 	
-	players: function () {
-		
+	'players': function () {
     	return Players.find({room: Session.get('room_id')});
   	},
   
   
   // list of colors for color picker
-  colors: function () {
-    return _.map(_.keys(colors), function (name) {
-      return {
-        name: name,
-        code: colors[name][0]
-      };
-    });
-  },
+  	'colors': function () {
+    	return _.map(_.keys(colors), function (name) {
+      		return {
+        		name: name,
+        		code: colors[name][0]
+      		};
+    	});
+  	},
   // active color helper for color picker
-  activeColor: function () {
-    return this.name === Session.get("color");
-  },
+  	'activeColor': function () {
+    	return this.name === Session.get("color");
+  	},
   // see if we are in login mode
-  loginMode: function () {
-    return Session.equals("mode", "login");   
-  }
-});
+  	'loginMode': function () {
+    	return Session.equals("mode", "login");   
+  	}
+});// end helper
+
+
 
 // events on the dialog with lots of buttons
 UI.body.events({
-
 
   "click .swatch": function () {
     Session.set("color", this.name);
@@ -167,7 +171,7 @@ UI.body.events({
     */
   },
    'keydown': function(event) {
-   if (Session.get("mode") != "login") {
+   if (Meteor.userId() != null) {
     event.preventDefault();
     
     console.log(event.which);

@@ -26,11 +26,11 @@ if (Meteor.isClient) {
     	}
   	},
   
-  'click .clearUpload':function() {
-    if (confirm('Are you sure?')) {
-      Meteor.call('clearUpload', this._id);
-    }
-  }
+  	'click .clearUpload':function() {
+    	if (confirm('Are you sure?')) {
+      		Meteor.call('clearUpload', this._id);
+    	}
+  	}
   });
 }
 

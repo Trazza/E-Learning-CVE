@@ -11,11 +11,11 @@ Template.quiz_template.events({
 		Meteor.call('setPlayerActivity', Session.get('user_id'),  null );
 		
     	console.log('Numero players con quiz = '+ Players.find({activity: 'quiz', room: Session.get('room_id')}).count());
-    	 AntiModals.dismissAll();
+    	AntiModals.dismissAll();
   		
   		
 				
-       console.log('Esci da quiz');
+       	console.log('Esci da quiz');
   },
   
 });

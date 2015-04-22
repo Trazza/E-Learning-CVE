@@ -13,24 +13,23 @@
 		
 		<h1>E-Learning-CVE</h1>
 		<p class="subtitle">Demo CVE</p>
+		
 		<h2> LISTA PLAYER LOGGATI </h2> 
 			<ul>
 				{{#each allPlayers}}
 					<li style='{{color}}'> {{nome}} -----> {{room}} </li>
 				{{/each}}
 			</ul>	
-		{{#if loginMode}}	
+		<!--{{#if loginMode}}-->	
+		{{#if currentUser}}
 			
-			{{> temporary_login}}
+			{{> user_logout}}
 		{{else}}
-			{{#each players}}
-					<li style='{{color}}'> {{nome}} </li>
-				{{/each}}
-			{{> temporary_logout}}
+			{{> user_login}}
 		{{/if}}		
 	</div>
 	<div class='details'>
-		<p> Dettagli (lavori in corso) </p>
+		
 	</div>	
  <div class='x3ddiv'>	
 <x3d class="{{#if buildMode}}build{{/if}}">

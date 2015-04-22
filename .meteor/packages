@@ -12,3 +12,6 @@ less
 tomi:upload-jquery
 tomi:upload-server
 ian:bootstrap-3
+accounts-google
+accounts-ui
+service-configuration
