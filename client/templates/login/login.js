@@ -10,12 +10,42 @@ var colors = {
 };
 
 
-	var user_id = Meteor.userId()
+	
 Accounts.onLogin( function (){
-	Session.set('user_id', user_id); 
+
+	window.setTimeout( function () { //attesa per dare a meteor il tempo di aggiornare la collection Users
+
+					var user_id = Meteor.userId();
+					console.log('User id: '+ user_id);
+				
+					if (typeof(Players.findOne(user_id)) != 'undefined'){
+    					alert('Attenzione: Utente già Loggato');
+    					Meteor.logout();
+    				}else{
+						
+						
+						//posizione iniziale della videocamera first-person
+						var y_view = "2.5";
+						var fp_view = "0";
+						//posizione iniziale player
+ 						var x = "3";
+ 						var y = "0";
+ 						var z = "0";
+ 						var color = Random.choice(colors[Session.get("color")]);
+ 		
+ 						console.log('room: '+ Session.get('room_id'));
+						Session.set("user_id", user_id); 
+ 						Meteor.call('insertPlayer', Session.get('room_id'), x, y, z, color, y_view, fp_view);
+ 						//Meteor.call('insertPlayer', room_id, user_id, username, x, y, z, color, y_view, fp_view);
+					
+					}	
+				}, 2000 );			
+	
 	window.setTimeout( function () {
-		console.log('room: '+ Players.findOne(user_id).room);
-		Session.set('room_id', Players.findOne(user_id).room); 
+		var user_id = Meteor.userId()
+		//Session.set('user_id', user_id); 
+		//console.log('room: '+ Players.findOne(user_id).room);
+		//Session.set('room_id', Players.findOne(user_id).room); 
 	}, 2000 );			
 });
 
@@ -62,6 +92,8 @@ Template.user_login.events({
     		alert("seleziona la room");
     		return;
     	} else {
+    	
+    			$('#login-button').hide(); 
     		// l'id temporaneo è costruito dall'username eliminando gli spazzi e aggiungendo '_id' in coda
     		
     		
@@ -81,29 +113,7 @@ Template.user_login.events({
 				});
 				
 				
-				window.setTimeout( function () { //attesa per dare a meteor il tempo di aggiornare la collection Users
-					var user_id = Meteor.userId();
-					console.log('User id: '+ user_id);
 				
-					if (typeof(Players.findOne(user_id)) != 'undefined'){
-    					alert('Attenzione: Utente già Loggato');
-    					Meteor.logout();
-    				}else{
-						//posizione iniziale della videocamera first-person
-						var y_view = "2.5";
-						var fp_view = "0";
-						//posizione iniziale player
- 						var x = "3";
- 						var y = "0";
- 						var z = "0";
- 						var color = Random.choice(colors[Session.get("color")]);
- 		
-						Session.set("user_id", user_id); 
- 						Meteor.call('insertPlayer', Session.get('room_id'), x, y, z, color, y_view, fp_view);
- 						//Meteor.call('insertPlayer', room_id, user_id, username, x, y, z, color, y_view, fp_view);
-					
-					}	
-				}, 2000 );			
        	}
        	
       },
@@ -112,12 +122,39 @@ Template.user_login.events({
     
       
     'click #prova' : function(e, t){
+    
+    	Meteor.call('prova');
+    	//Meteor.log.info('1234567890'); 
+    	/* visualizzare slide da google drive 
+    	var url = "https://drive.google.com/file/d/0B_rkHyo_rKS4Zk1zLVB1WUpieGs/view?usp=sharing&output=embed";
+    	window.open(url);
+    	*/
+    	//window.location.replace(url);
        
-       	Meteor.call('prova');
+       /*
+       AntiModals.dismissAll();
+  		AntiModals.overlay('slideshow', {
+      					modal: true,
+      				});
+
+    	
+		console.log('personalizza');
+       		
+	}
+   */
+       /*
+       AntiModals.dismissAll();
+  		AntiModals.overlay('personalize_modalView', {
+      					modal: true,
+      				});
+
+    	
+		console.log('personalizza');
+		*/
        		
 	}
    
-});
+}); // end user.login event
 
 Template.user_login.helpers({
 	
@@ -166,17 +203,18 @@ Template.user_logout.events({
 		//Session.set("utente", "Non sei loggato");
 		//$("#nome_utente_log").empty();
 		
-		
-		Meteor.logout(function () {
-			Meteor.call('removePlayer',Session.get('user_id'));
-			Session.set('user_id', null);
-			Session.set('room_id', null);	
-		});
+		Meteor.call('removePlayer',Session.get('user_id'));
+		Session.set('user_id', null);
+		Session.set('room_id', null);	
+		Meteor.logout();
 		//Players.remove(Session.get('user_id'));
-      	location.reload(); //riaggiorna la pagina per pulire gli oggetti che non servono
-       
-      }
-  });
+		window.setTimeout( function () {
+      		location.reload(); //riaggiorna la pagina per pulire gli oggetti che non servono
+      		$('#login-button').show();
+       	}, 2000 );
+       	
+    }
+});
 
 
 

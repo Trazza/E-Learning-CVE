@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project>
+<about>
+	<creator>
+		<user>Cinzia Rosato</user>
+		<userId>cinzia.rosato@gmail.it</userId>
+	</creator>
+	<session>
+		<sessionId>c8af34e2-bc52-65c8-9fbf-fa128baedd90</sessionId>
+		<password>cinzia</password>
+	</session>
+	<description>descrizione</description>
+	<screenplay>screen</screenplay>
+	<title>prova_cinzia</title>
+	<mondo>
+		<name>mondo1</name>
+		<path>x3d/mondo1.x3d</path>
+	</mondo>
+	<webserverurl>http://localhost:8080/</webserverurl>
+</about>
+
+<actors>
+	 <actor>
+		<role>Utente2D</role>
+		<description>descrizione utente 2d</description>
+		<numperrole>1</numperrole>
+   	 </actor>
+</actors>
+
+<acts>
+	<act>
+		<title>Atto1</title>
+		<description>descrizione atto1</description>
+		<scenes>
+		
+			<scene>
+				<title>Scena1</title>
+				<description>descrizione scena 1</description>
+				<stage>stage2mondo1</stage>
+				<metaphors>
+						<metaphor>
+							<element>
+								<name>lavagna</name>
+								<event>click</event>
+								<roles>Tutti</roles>
+								<position_x>0.14222222222222222</position_x>
+								<position_y>0.16</position_y>
+								<action>
+									<type>FileFromUser</type>
+									<attribute>Aggiungi File</attribute>
+									<success>
+										<type>INSERISCI</type>
+										<attribute>INSERISCI1</attribute>
+									</success>
+									<failure>
+										<type>INSERISCI2</type>
+										<attribute>INSERISCI3</attribute>
+									</failure>
+								</action>
+							</element>
+						</metaphor>
+				</metaphors>
+			</scene>
+			
+			<scene>
+				<title>Scena2</title>
+				<description>descrizione scena 2</description>
+				<stage>stage1mondo1</stage>
+				<metaphors>
+					<metaphor>
+						<element>
+							<name>schermo</name>
+				    		<event>click</event>
+				    		<roles>Tutti</roles>
+				    		<position_x>0.13111111111111112</position_x>
+				   			<position_y>0.14</position_y>
+				   				<action>
+				   				<type>GoToWebPage</type>
+				   				<attribute>Indica url della pagina Web</attribute>
+								<success>
+				   					<type>INSERISCI</type>
+									<attribute>INSERISCI1</attribute>
+			   					</success>
+			   					<failure>
+				   					<type>INSERISCI2</type>
+				   					<attribute>INSERISCI3</attribute>
+				   				</failure>
+							</action>
+					  	</element>
+					</metaphor>
+				</metaphors>
+		 	</scene>
+		</scenes>
+	</act>
+</acts>
+
+</project>

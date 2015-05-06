@@ -11,7 +11,7 @@ Template.finestra_template.events({
   
   	"click #quiz": function(e, t) {
 		AntiModals.dismissAll();
-    	if (Session.get("mode") != "login") {
+    	if (Meteor.userId() != null) {
     		console.log('Alert Quiz Room: '+Session.get('room_id')+' => value: '+ Alerts.findOne({name: 'quiz', room: Session.get('room_id')}).value );
 			if (Alerts.findOne({name: 'quiz', room: Session.get('room_id')}).value == false ) {
 				console.log('quiz');

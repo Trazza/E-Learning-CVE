@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project>
+	<about>
+  		<creator>Antonella Nigro</creator>
+  		
+  		<user>antonella@gmail.com</user>
+  		<password>122345567</password>
+  		
+		<description>Descrizione progetto</description>
+		<screenplay>Trama del progetto</screenplay>
+		<title>Titolo progetto</title>
+		<mondo>mondo1</mondo>
+	</about>
+	<actors>
+		<actor>
+			<role>UtenteMixed</role>
+			<description>descrizione primo ruolo</description>
+			<numperrole>9</numperrole>
+		</actor>
+		<actor>
+			<role>Guida</role>
+			<description>descrizione guida</description>
+			<numperrole>1</numperrole>
+		</actor>
+	</actors>
+	<acts>
+		<act>
+			<title>Atto1</title>
+			<description>descrizione atto</description>
+			<scenes>
+				<scene>
+					<title>Scena1</title>
+					<description>descrizione scena 1 atto 1</description>
+					<stage>stage1</stage>
+					<metaphors>
+						<metaphor>
+							<element>lavagna</element>
+							<event>click</event>
+							<roles>UtenteMixed</roles>
+							<action>GoToQuiz,www.quiz.it,MessageToUser,Risposta corretta!</action>
+						</metaphor>
+					</metaphors>
+				</scene>
+				<scene>
+					<title>Scena2</title>
+					<description>descrizione scena 2 atto 1</description>
+					<stage>stage3</stage>
+					<metaphors>
+						<metaphor>
+							<element>schermo</element>
+							<event>click</event>
+							<roles>Tutti</roles>
+							<action>GoToWebPage,www.page.it</action>
+						</metaphor>
+					</metaphors>
+				</scene>
+			</scenes>
+		</act>
+	</acts>
+</project>
+

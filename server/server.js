@@ -27,10 +27,55 @@ Meteor.publish("rooms", function () {
 if (Meteor.isServer) {
 
 
+
 	Meteor.methods({
 	
+	
+		'xmlLoad': function(xml_path){
+				console.log('load XML');
+    	
+    			//$(document).ready(function() {
+ 
+					$.ajax({ type: "GET", url: xml_path, dataType: "xml",
+     
+    					success: function(xml) {
+
+    						$(xml).find('project').each(function() {   				
+    				
+	        					var user = $(this).find('user').text();
+    	    					console.log('user: '+user);
+        				
+     		   					var userId = $(this).find('userId').text();
+     		   					console.log('userId: '+userId);
+     					
+    					
+         						var sessionId = $(this).find('sessionId').text();
+         						console.log('room: '+sessionId);
+         				
+         						var password = $(this).find('password').text();
+         						console.log('pass: '+password);
+      					
+       						
+      							$(this).find('scene').each(function() {
+        							var title = $(this).find('title').text();
+        							var description = $(this).find('description').text();
+        							var stage = $(this).find('stage').text();
+        							console.log('title: '+title);
+        							console.log('description: '+description);
+        							console.log('stage: '+stage);
+      							});
+      						});   
+    					},
+    					error: function(request, error, tipo_errore) { alert(error+': '+ tipo_errore); }
+  					});
+				//});
+		  		
+  		},	
+		
+	
 		'prova': function(){
-			console.log(Meteor.user().services.google.name);
+			//console.log(Meteor.user().services.google.name);
+			Meteor.log.info('prova logfile');
   			return;
   		},	
 		
@@ -227,8 +272,19 @@ if (Meteor.isServer) {
 
 
 
-//------------------------------------------------------------------------------------------------------------------
+  //------------------------------------------------------------------------------------------------------------------
 	Meteor.startup(function() {
+	
+	
+		//numero dei modi virtuali cariati (numero di file xml)
+
+		
+	
+		//caricamento dei mondi virtuali (attualmente solo 1)
+		//var xml_path = 'xml/config.xml';
+		//Meteor.call('xmlLoad', xml_path); // Caricamento del mondo virtuale dall'XML
+		
+	
 	
 		//Per ogni stanza si verifica che siano presenti tutti gli oggetti associati
 		
@@ -257,17 +313,13 @@ if (Meteor.isServer) {
 				console.log("Quiz DEFINITO: room = "+ room._id);
 			
 			} 
-			
-			
-			
+	
 		});
 
 
-
-
-
-
     }); //end 'Meteor.startup'  
+  //------------------------------------------------------------------------------------------------------------------
+
 
 } //end 'Meteor.isServer'
 

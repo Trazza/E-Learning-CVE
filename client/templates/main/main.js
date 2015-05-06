@@ -25,7 +25,7 @@ Tracker.autorun(function () {
   
 });
 
-// ----------- Google account -----------------------------------------
+
 
 
 
@@ -114,12 +114,18 @@ var handle_personalize = personalize.observeChanges({
 //-------------------------------------------------------------------------------------------------------------------------------------------
 
 
+
+
+
+
+
+
 // this uses the Shark branch of Meteor, hence the UI namespace
 UI.body.helpers({
 	'allPlayers': function () {
     	return Players.find({});
   	},
-  	
+  	 /*
   	'objects': function () {
     	return Objects.find({room: Session.get('room_id')});
   	},
@@ -127,7 +133,7 @@ UI.body.helpers({
 	'players': function () {
     	return Players.find({room: Session.get('room_id')});
   	},
-  
+  */
   
   // list of colors for color picker
   	'colors': function () {
@@ -142,10 +148,13 @@ UI.body.helpers({
   	'activeColor': function () {
     	return this.name === Session.get("color");
   	},
-  // see if we are in login mode
+  /* // see if we are in login mode
   	'loginMode': function () {
     	return Session.equals("mode", "login");   
   	}
+  */
+  
+  
 });// end helper
 
 
