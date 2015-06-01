@@ -1,136 +1,93 @@
+
 <template name="user_login">
 	<form id="temporary_login_form" action="action">
 		<div>
 			------------------------------------------
       		<h2>Login</h2>
-      	
-      		<div class="room-list">
-				<h2>Lista ROOM attive</h2>
-				Seleziona una Room:
-				<select id="rooms" name="rooms">
-					<option value="default" selected>No Room selected</option>
-					{{#each rooms}}
-						<option value="{{_id}}">{{name}}</option>
-					{{/each}}
-				</select>
-			
-				<br><br>
-				<button id='prova' type="button">Prova Sessione</button>
-			
-      		</div>
-        	<div class="color-picker">
-				<h2>SCEGLI IL TUO COLORE</h2>
-				{{#each colors}}
-					<div class="swatch{{#if activeColor}} active{{/if}}" style="background-color: {{code}}">
-						{{name}}
-					</div>
-				{{/each}}
-			</div>
-			
-			<br>
-        	<br>
 			<div id='googleLogin'>
 				<p> Google account </p>
-				<!-- {{> loginButtons align="right"}} -->
         		<button class="login-mode btn active" id="login-button">Sign in</button> 
-     		</div>
-			<div>
-        		<h2>Create ROOM</h2>
-      			Inserisci il nome del Room:
-        		<input type="text" id="room-name" />
-        		<button id='room-button' type="button">Crea</button>
-        	</div>
-        	------------------------------------------
+     		</div>	
      	</div>	
   	</form> 
 
 </template>
 
+<!-- ***************************************************************************** -->
 
 <template name="user_logout">
 
 	<form id="temporary_logout_form" action="action">
+			
 		<div>
-			{{#each players}}
-				<li style='{{color}}'> {{nome}} </li>
-			{{/each}}
-		</div>		
-		<div>
-		<!-- {{> loginButtons align="right"}} -->
-        	<input type="submit" id="logout-button" value="Logout" /> 
+        	<b>{{myName}} </b> <input type="submit" id="logout-button" value="Logout" /> 
      	</div>
   	</form> 
 
 </template>
 
+<!-- ***************************************************************************** -->
 
-<template name="temporary_login">
-
-	<form id="temporary_login_form" action="action">
-		<div>
-      		<h2>Login</h2>
-      		 <br>
-      		Username:
-        	<input type="text" id="login-username" />
-        	<br>
-        	<br>
-        	<div class="color-picker">
-				<h2>SCEGLI IL TUO COLORE</h2>
-				{{#each colors}}
-					<div class="swatch{{#if activeColor}} active{{/if}}" style="background-color: {{code}}">
-						{{name}}
-					</div>
-				{{/each}}
-			</div>
-			
-			<div>
-			<div class="room-list">
-				<h2>Lista ROOM attive</h2>
-				Seleziona una Room:
-				<select id="rooms" name="rooms">
-					<option value="default" selected>No Room selected</option>
-					{{#each rooms}}
-						<option value="{{_id}}">{{name}}</option>
-					{{/each}}
-				</select>
-			
-				<br><br>
-				<button id='prova' type="button">Prova Sessione</button>
-			
-      		</div>
-
-			<div>
-        		<h2>Create ROOM</h2>
-      			Inserisci il nome del Room:
-        		<input type="text" id="room-name" />
-        		<button id='room-button' type="button">Crea</button>
-     		</div>
-     		
-     	</div>
-			<br>
-        	<br>
-			
-        	<button class="login-mode btn active" id="login-button">Sign in</button>
-     	</div>
-  	</form> 
-
-</template>
-
-
-
-
-
-
-<!--		
+<template name="select_session">
+	<div class="room-list">
 		
-		<div class='select-team'>
-				<h2>SELEZIONA IL TEAM</h2>
-				<form action="">
-		 			<button id='team_1' type="button"><img src="/img/team_1.gif" width="64" height="64"><br/><h1>Team 1</h1></button>
-		 			<button id='team_2' type="button"><img src="/img/team_2.png" width="64" height="64"><br/><h1>Team 2</h1></button><br/>
-				</form>
+		<div>
+        	<h2>I tuoi Mondi virtuali</h2>
+        	
+        	<div>
+        		<table style="width:100%">
+        			{{#each myRooms}}
+        				<tr>
+  							{{#if loaded}}
+  								<td><b>{{title}}: </b></td>
+  								<td><button id={{_id}} class='disableRoom' type="button" value={{session}}><img src="/img/1.gif" width="16" height="16"> &nbsp; Disattiva</button></td>
+  							{{else}}
+  								<td>{{title}}: </td>
+  								<td><button id={{_id}} class='enableRoom' type="button" value={{session}}><img src="/img/1.png" width="16" height="16"> &nbsp; Attiva</button></td>
+  							{{/if}}
+  						</tr>
+  					{{/each}}
+  				</table>
+			</div>
+        </div>
+		
+		<div>
+			<h2>Lista ROOM attive</h2>
+			Seleziona una Room:
+			<select id="rooms" name="rooms">
+				<option value="default" selected>No Room selected</option>
+				{{#each rooms}}
+					<option value="{{session}}">{{title}}</option>
+				{{/each}}
+			</select>
 		</div>
+			
+		<br><br>
+		<button id='prova' type="button">Prova </button>
+    </div>
+
+	<div class="color-picker">
+		<h2>SCEGLI IL TUO COLORE</h2>
+		{{#each colors}}
+			<div class="swatch{{#if activeColor}} active{{/if}}" style="background-color: {{code}}">
+				{{name}}
+			</div>
+		{{/each}}
+	</div>
+
+    <input type="submit" id="enterSession" value="Entra" /> 
+     	
+
+</template>
+
+<!-- ***************************************************************************** -->
+
+<template name="exit_session">
+	<br>
+	<p><b>Sessione: </b> 	{{session}}</p>
+	<p><b>Scena: </b>		{{scene}}</p>
+	<input type="submit" id="exitSession" value="Esci" />  	
+</template>
 
 
--->
 

@@ -9,11 +9,6 @@
 		
 	</head>
 	<Scene>
-		<NavigationInfo headlight="false"
-		                visibilityLimit="0.0"
-		                type='"EXAMINE", "ANY"'
-		                avatarSize="0.25, 1.75, 0.75"
-		                />
 		
 		<Transform DEF="Mesh_Default_TRANSFORM"
 		           translation="0.000000 0.000000 0.000000"

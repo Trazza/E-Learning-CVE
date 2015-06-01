@@ -12,16 +12,21 @@ var colors = {
 
 
 Session.set("color", "brown"); // set initial color
-Session.set("mode", "login"); // set initial mode to view
+//Session.set("mode", "login"); // set initial mode to view
 
 
-
+//********************************************************
+//
+//  http://docs.meteor.com/#/full/publishandsubscribe
+//
+//**********************************************************
 Tracker.autorun(function () {
-	Meteor.subscribe('uploads');
-	Meteor.subscribe("objects");
+    Meteor.subscribe('uploads');
+    Meteor.subscribe("objects");
   	Meteor.subscribe("players");
   	Meteor.subscribe("alerts");
   	Meteor.subscribe("rooms");
+    Meteor.subscribe("scenes");
   
 });
 
@@ -33,7 +38,7 @@ Tracker.autorun(function () {
 
 
 
-// -------------- Activity ------------------------------------------------------------------------------------------------------------------------------------------
+// ******************* Activity *************************************************************
 
 //Vengono osservate le modifiche sulla collection Alerts
 //Se il valore value passa da false a true viene scatenato l'evento associato (VEDERE: cursor.observeChanges()) 

@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project>
+    <about>
+        <creator>
+            <user>GsaLab</user>
+  	        <userId>gsa.lab.international@gmail.com</userId>
+        </creator>
+        <session>
+            <sessionId>35182e82-9f45-5a71-ee5f-7fb3127e8946</sessionId>
+            <password>654321</password>
+        </session>
+        <description>Progetto Demo GSA</description>
+        <screenplay>z</screenplay>
+        <title>GSA Project</title>
+        <mondo>
+            <name>Il magico mondo del GSA</name>
+            <path>xml/mondo1.xml</path>  
+        </mondo>
+        <webserverurl>http://localhost:8080/</webserverurl>
+    </about>
+
+
+  <actors>
+     <actor>
+         <role>Utente2D</role>
+          <description>descrizione</description>
+          <numperrole>1</numperrole>
+      </actor>
+  </actors>
+
+  <acts>
+      <act>
+          <title>Atto1</title>
+          <description>descrizione atto1</description>
+          <scenes>
+
+              <scene>
+                  <title>Scena1</title>
+                  <description>descrizione scena 1</description>
+                  <stage>piano_verde</stage> <!-- modificato -->
+                  <metaphors>
+                      <metaphor>
+                          <element>
+                              <name>lavagna</name>
+                              <event>click</event>  
+                              <roles>Tutti</roles>
+                              <position_x>2</position_x>
+                              <position_z>2</position_z>  <!-- modificato Z-->
+                              <action>
+                                  <type>GoToQuiz</type>
+                                  <attribute>www.quiz1.it</attribute>
+                                  <success>
+                                      <successType>MessageToUser</successType>
+                                      <successAttribute>messaggio1success</successAttribute>
+                                  </success>
+                                  <failure>
+                                      <failureType>MessageToNoUser</failureType>
+                                      <failureAttribute>messaggio1failure</failureAttribute>
+                                  </failure>
+                              </action>
+                          </element>
+                      </metaphor>
+                  </metaphors>
+              </scene>
+
+              <scene>
+                  <title>Scena2</title>
+                  <description>descrizione scena 2</description>
+                  <stage>piano_viola</stage>  <!-- modificato -->
+                  <metaphors>
+                      <metaphor>
+                          <element>
+                              <name>lavagna</name>
+                              <event>click</event>  
+                              <roles>Tutti</roles>
+                              <position_x>0</position_x>
+                              <position_z>0</position_z>  <!-- modificato -->
+                              <action>
+                                  <type>GoToQuiz</type>
+                                  <attribute>www.quiz2.it</attribute>
+                                  <success>
+                                      <successType>MessageToUser</successType>
+                                      <successAttribute>messaggio2success</successAttribute>
+                                  </success>
+                                  <failure>
+                                      <failureType>MessageToNoUser</failureType>
+                                      <failureAttribute>messaggio2failure</failureAttribute>
+                                  </failure>
+                              </action>
+                          </element>
+                      </metaphor>
+                  </metaphors>
+              </scene>
+
+          </scenes>
+      </act>
+  </acts>
+</project>

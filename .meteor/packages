@@ -16,3 +16,8 @@ accounts-google
 accounts-ui
 service-configuration
 iron:router
+meteorhacks:npm
+
+
+npm-container
+jparker:crypto-md5

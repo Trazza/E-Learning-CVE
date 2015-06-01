@@ -10,7 +10,8 @@ var colors = {
 };
 
 
-	
+	// TODO per migliorare le prestazioni
+  //    provare a sostituite i timeout con Future() per la sincronizzazione 
 Accounts.onLogin( function (){
 
 	window.setTimeout( function () { //attesa per dare a meteor il tempo di aggiornare la collection Users
@@ -18,179 +19,75 @@ Accounts.onLogin( function (){
 					var user_id = Meteor.userId();
 					console.log('User id: '+ user_id);
 				
-					if (typeof(Players.findOne(user_id)) != 'undefined'){
-    					alert('Attenzione: Utente già Loggato');
-    					Meteor.logout();
-    				}else{
-						
-						
-						//posizione iniziale della videocamera first-person
-						var y_view = "2.5";
-						var fp_view = "0";
-						//posizione iniziale player
- 						var x = "3";
- 						var y = "0";
- 						var z = "0";
- 						var color = Random.choice(colors[Session.get("color")]);
+					if (typeof(Players.findOne(Meteor.userId())) != 'undefined'){
+    					console.log('Attenzione: Utente riloggato');
+              //Session.set('room', Players.findOne(Meteor.userId()).room );
+              //Session.set('scene', Players.findOne(Meteor.userId()).scene);
+              console.log('Sessione: '+Session.get('room'));
+              console.log('Scene: '+Session.get('scene'));
+    			}else{
+
+						  
  		
- 						console.log('room: '+ Session.get('room_id'));
-						Session.set("user_id", user_id); 
- 						Meteor.call('insertPlayer', Session.get('room_id'), x, y, z, color, y_view, fp_view);
- 						//Meteor.call('insertPlayer', room_id, user_id, username, x, y, z, color, y_view, fp_view);
-					
+						  Session.set("user_id", user_id); 
+              //Meteor.call('show');
+              //insertPlayer': function(room_id, scene, x, y, z, color, y_view, fp_view)
+              //Meteor.call('insertPlayer', Session.get('room_id'), x, y, z, color, y_view, fp_view);
+              Meteor.call('insertPlayer', null, null, null, null, null, null, null, null);
 					}	
-				}, 2000 );			
+	}, 2000 );			
 	
 	window.setTimeout( function () {
 		var user_id = Meteor.userId()
 		//Session.set('user_id', user_id); 
 		//console.log('room: '+ Players.findOne(user_id).room);
 		//Session.set('room_id', Players.findOne(user_id).room); 
-	}, 2000 );			
-});
+	}, 2000 );	
 
+}); // ENd Accounts.onLogin() **********
 
 Template.user_login.events({
 	
-	"click .swatch": function() {
-    	Session.set("color", this.name);
-  	},
-  	
-  	'click #room-button' : function(e, t){
-    	
-    	e.preventDefault(); //  ???
-      	var roomname = t.find('#room-name').value;
-    	 
-    	if (roomname.replace(/ /g, '') == "") {  //verifico che il nome non sia una sequenza di spazi
-    		alert("inserisci il nome della Stanza");
-    	} else {
-    		// l'id temporaneo è costruito dall'username eliminando gli spazzi e aggiungendo '_id' in coda
-    		var room_id = roomname.replace(/ /g, '')+ "_id";
-    		if (typeof(Rooms.findOne(room_id)) != 'undefined'){
-    			alert('Stanza ESISTENTE');
-    		}else{;
-				 
-				//viene creata la room con gli oggetti e le attività associate
-				Meteor.call('insertRoom', room_id, roomname);
-				Meteor.call('insertObject', 'lavagna', room_id);
-				Meteor.call('insertActivity', 'quiz', room_id);
-				//Session.set('room_id', room_id);
-				
-			}
-       	}
-     	t.find('#room-name').value = ""; 	
-	},
-    
     
     'click button.login-mode' : function(e, t){  //login
     	
-    	e.preventDefault(); //  ???
+    	 e.preventDefault(); //  ???
 
       	//estraggo il nome dal form di login
-    	 
-    	if (t.find('#rooms').value == 'default') {  //verifico che il nome non sia una sequenza di spazi
-    		alert("seleziona la room");
-    		return;
-    	} else {
+    	 Meteor.loginWithGoogle({
+            //requestPermissions: ['profile']
+            requestPermissions: ['email']
+          }, function (err) {
+              if (err)
+                Session.set('errorMessage', err.reason || 'Unknown error');
+        });
+    },
     	
-    			$('#login-button').hide(); 
-    		// l'id temporaneo è costruito dall'username eliminando gli spazzi e aggiungendo '_id' in coda
-    		
-    		
-				//Session.set("mode", "scenaMode"); //si cambia il template 
-				//Session.set("utente", username); 
-				
-				var room_id = t.find('#rooms').value;
-				Session.set('room_id', room_id);
-				
-		
-				Meteor.loginWithGoogle({
-  					requestPermissions: ['profile']
-					}, function (err) {
-  						if (err)
-    						Session.set('errorMessage', err.reason || 'Unknown error');
-    					
-				});
-				
-				
-				
-       	}
-       	
-      },
-    
-    
-    
       
-    'click #prova' : function(e, t){
     
-    	Meteor.call('prova');
-    	//Meteor.log.info('1234567890'); 
-    	/* visualizzare slide da google drive 
-    	var url = "https://drive.google.com/file/d/0B_rkHyo_rKS4Zk1zLVB1WUpieGs/view?usp=sharing&output=embed";
-    	window.open(url);
-    	*/
-    	//window.location.replace(url);
-       
-       /*
-       AntiModals.dismissAll();
-  		AntiModals.overlay('slideshow', {
-      					modal: true,
-      				});
-
-    	
-		console.log('personalizza');
-       		
-	}
-   */
-       /*
-       AntiModals.dismissAll();
-  		AntiModals.overlay('personalize_modalView', {
-      					modal: true,
-      				});
-
-    	
-		console.log('personalizza');
-		*/
-       		
-	}
    
 }); // end user.login event
 
 Template.user_login.helpers({
-	
-	// list of colors for color picker
-  	colors: function () {
-  	
-  	
-    	return _.map(_.keys(colors), function (name) {
-      		return {
-        		name: name,
-        		code: colors[name][0]
-      		};
-    	});
-  	},
-  	
-  // active color helper for color picker
-  	activeColor: function () {
-    	return this.name === Session.get("color");
-  	},
 
 	roomSelected: function() {
 		return $('#rooms').value;
 	},
-	
-	rooms: function () {
-    	return Rooms.find();
-    },
-    
-    activeRoom: function () {
+	    
+  activeRoom: function () {
     	return Rooms.find({_id: Session.get("room_id")});
-  	}
-
-    
+  }
+   
 });
 
 
+Template.user_logout.helpers({
+
+  myName: function () {
+    return Players.findOne({_id: Meteor.userId()}).nome;
+  }
+   
+});
 
 Template.user_logout.events({
 
@@ -203,177 +100,156 @@ Template.user_logout.events({
 		//Session.set("utente", "Non sei loggato");
 		//$("#nome_utente_log").empty();
 		
-		Meteor.call('removePlayer',Session.get('user_id'));
+		Meteor.call('removePlayer', Meteor.userId());
 		Session.set('user_id', null);
-		Session.set('room_id', null);	
+		Session.set('room', null);	
+    Session.set('scene', null);
 		Meteor.logout();
 		//Players.remove(Session.get('user_id'));
 		window.setTimeout( function () {
       		location.reload(); //riaggiorna la pagina per pulire gli oggetti che non servono
-      		$('#login-button').show();
+      		//$('#login-button').show();
        	}, 2000 );
        	
     }
 });
 
 
+Template.select_session.events({
+  "click .swatch": function() {
+      Session.set("color", this.name);
+  },
 
-
-
-
-
-Template.temporary_login.events({
- 
- 	"click .swatch": function() {
-    	Session.set("color", this.name);
-  	},
-
-    'click button.login-mode' : function(e, t){  //login
-    	
-    	e.preventDefault(); //  ???
-
-      	//estraggo il nome dal form di login
-    	var username = t.find('#login-username').value;
-    	 
-    	if (username.replace(/ /g, '') == "" || t.find('#rooms').value == 'default') {  //verifico che il nome non sia una sequenza di spazi
-    		alert("inserisci username e seleziona la room");
-    	} else {
-    		// l'id temporaneo è costruito dall'username eliminando gli spazzi e aggiungendo '_id' in coda
-    		var user_id = username.replace(/ /g, '')+ "_id";
-    		if (typeof(Players.findOne(user_id)) != 'undefined'){
-    			alert('utente ESISTENTE');
-    		}else{;
-				Session.set("mode", "scenaMode"); //si cambia il template 
-				//Session.set("utente", username); 
-				
-				
-				 //posizione iniziale della videocamera first-person
-				var y_view = "2.5";
-				var fp_view = "0";
-				//posizione iniziale player
- 				var x = "3";
- 				var y = "0";
- 				var z = "0";
- 				var color = Random.choice(colors[Session.get("color")]);
-				var room_id = t.find('#rooms').value;
-				
-				Meteor.call('insertPlayer', room_id, user_id, username, x, y, z, color, y_view, fp_view);
-				
-				Session.set("user_id", user_id); 
-				Session.set('room_id', room_id);
-				
-				Meteor.loginWithGoogle({
-  					requestPermissions: ['profile']
-					}, function (err) {
-  						if (err)
-    						Session.set('errorMessage', err.reason || 'Unknown error');
-				});
-			}
-       	}
-       	
-      },
+  "click .enableRoom": function() {
       
-      'click #room-button' : function(e, t){
-    	
-    	e.preventDefault(); //  ???
-      	var roomname = t.find('#room-name').value;
-    	 
-    	if (roomname.replace(/ /g, '') == "") {  //verifico che il nome non sia una sequenza di spazi
-    		alert("inserisci il nome della Stanza");
-    	} else {
-    		// l'id temporaneo è costruito dall'username eliminando gli spazzi e aggiungendo '_id' in coda
-    		var room_id = roomname.replace(/ /g, '')+ "_id";
-    		if (typeof(Rooms.findOne(room_id)) != 'undefined'){
-    			alert('Stanza ESISTENTE');
-    		}else{;
-				 
-				//viene creata la room con gli oggetti e le attività associate
-				Meteor.call('insertRoom', room_id, roomname);
-				Meteor.call('insertObject', 'lavagna', room_id);
-				Meteor.call('insertActivity', 'quiz', room_id);
-				//Session.set('room_id', room_id);
-				
-			}
-       	}
-       	
-       	
-     	t.find('#room-name').value = "";
-     	
-     	
-		},
+      Meteor.call('enableRoom', this.session, true);
+  },
+
+   "click .disableRoom": function() {
       
-       'click #prova' : function(e, t){
-       
-       		Meteor.call('prova');
-       		
-       		
-       		//Meteor.call('insertLog');
-       		/*
-       		var player = Players.findOne({nome: 'AAA', room: 'GSA_id'});
-       		console.log(player.nome+' , '+player.room)
-       		
-       		
-       		var stanze = Rooms.find({});
-			stanze.forEach(function (post) {
-  				console.log("Nome stanza: "+ post._id );
-			});
-       		
-       		var oggetti = Objects.find({});
-			oggetti.forEach(function (post) {
-  				console.log("ID oggetti: "+ post._id );
-			});
-       		
-  			var room = t.find('#rooms').value;
-  			
-     		alert(room);
-     		*/
-		}
-  });
-  
-  
-  
+      Meteor.call('enableRoom', this.session, false);
+  },
+
+  'click #enterSession' : function(e, t){
+
+        if (t.find('#rooms').value == 'default') {  //verifico che il nome non sia una sequenza di spazi
+            alert("seleziona la room");
+            return;
+        } else {
+            var session = t.find('#rooms').value;  // id la sessione in cui si collega il player 
+            console.log('session:'+session);
+            var pass = Rooms.findOne({session: session}).pass;
+            //console.log('password: '+pass);
+            var password = prompt('Inserisci la password' , pass);
+            if(pass == password){
+                
+                var scene = Scenes.findOne({room: session}).title; // prima scena della sessione (è sempr la prima scena caricata)
+                console.log('scene: '+scene); 
+                //posizione iniziale della videocamera first-person
+                var y_view = "2.5";
+                var fp_view = "0";
+                //posizione iniziale player
+                var x = "3";
+                var y = "0";
+                var z = "0";
+                var color = Random.choice(colors[Session.get("color")]);
 
 
+                //'updatePlayer': function (room_id, scene, x, y, z, color, y_view, fp_view){
+                Session.set('room', session); 
+                Session.set('scene', scene );
+                Meteor.call('updatePlayer', session, scene, x, y, z, color, y_view, fp_view);
+                /*
+                window.setTimeout( function () {
+                    location.reload(); //riaggiorna la pagina per pulire gli oggetti che non servono
+                    //$('#login-button').show();
+                }, 2000 );
+                */
+            } else {
+                alert('Password ERRATA\n\n Per accedere richiedi le credenziali all\'amministratore del mondo virtuale');
+            }
 
 
+            
 
+        }     
+  },
 
-Template.temporary_login.helpers({
-
-
-  // list of colors for color picker
-  	colors: function () {
-  	
-  	
-    	return _.map(_.keys(colors), function (name) {
-      		return {
-        		name: name,
-        		code: colors[name][0]
-      		};
-    	});
-  	},
-  	
-  // active color helper for color picker
-  	activeColor: function () {
-    	return this.name === Session.get("color");
-  	},
-
-	roomSelected: function() {
-		return $('#rooms').value;
-	},
-	
-	rooms: function () {
-    	return Rooms.find();
-    },
+  'click #prova' : function(){
     
-    activeRoom: function () {
-    	return Rooms.find({_id: Session.get("room_id")});
-  	}
+      //var email = Players.findOne({_id: Meteor.userId()}).email;
+      //console.log('email: '+email);
+      //Meteor.call('show');
+      //alert('SuccesType: '+ 'succF'+'\n SuccesAttribute: '+ 'succA');
+      var text = 'GoToTable';
+      Meteor.call(text, '', null, null, null);
+
+      
+  }
+    
+});
+
+Template.select_session.helpers({
+
+  
+
+  rooms: function () {
+    return Rooms.find({loaded: true});
+  },
+
+  //tutte le sessioni (.xml) create dall'utente loggato
+  myRooms: function() {
+      // A causa dell'attesa nel caricare il Player nella collection può segalare un errore email: 'undefined'   
+     return Rooms.find({userId: Players.findOne({_id: Meteor.userId()}).email});
+  },
+
+
+  colors: function () { 
+    return _.map(_.keys(colors), function (name) {
+          return {
+            name: name,
+            code: colors[name][0]
+          };
+      });
+  },
+    
+  // active color helper for color picker
+  activeColor: function () {
+      return this.name === Session.get("color");
+  },
+
 
 });
 
 
 
+Template.exit_session.helpers({
+
+  'session': function () {
+      return Rooms.findOne({session: Players.findOne({_id: Meteor.userId()}).room}).title;
+  },
+
+  'scene': function () {
+      return Players.findOne({_id: Meteor.userId()}).scene;
+  }
+
+});
+
+
+Template.exit_session.events({
+  'click #exitSession' : function(e, t){
+
+        
+      //'updatePlayer': function(room, scene, x, y, z, color, y_view, fp_view){
+      Meteor.call('updatePlayer', null, null, null, null, null, null, null, null);       
+      Session.set('room', null); 
+      Session.set('scene', null);
+      location.reload();
+
+          
+  },
+
+});
   
   
   

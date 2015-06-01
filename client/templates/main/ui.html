@@ -9,15 +9,15 @@
 		<h1>E-Learning-CVE</h1>
 		<p class="subtitle">Demo CVE</p>
 		
-		<h2> LISTA PLAYER LOGGATI </h2> 
-			<ul>
-				{{#each allPlayers}}
-					<li style='{{color}}'> {{nome}} -----> {{room}} </li>
-				{{/each}}
-			</ul>	
 			
 		{{#if currentUser}}
 			{{> user_logout}}
+			{{#if onSession}}
+				{{> exit_session}}
+			{{else}}
+				{{> select_session}}
+			{{/if}}
+			
 		{{else}}
 			{{> user_login}}
 		{{/if}}		

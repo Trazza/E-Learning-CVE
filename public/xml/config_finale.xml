@@ -1,91 +1,102 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project>
- <about>
-  <creator>
-  	<user>Cinzia Rosato</user>
-  	<userId>cinzia.rosato@gmail.it</userId>
-  </creator>
-  <session>
-   <sessionId>55182e82-9f45-5a71-ee5f-7fb3127e8946</sessionId>
-   <password>password</password>
-  </session>
-  <description>z</description>
-  <screenplay>z</screenplay>
-  <title>CinzProject</title>
-  <mondo>
-  	<name>mondo1</name>
-  	<path>x3d/mondo1.x3d</path>
-  </mondo>
-  <webserverurl>http://localhost:8080/</webserverurl>
-</about>
-<actors>
- <actor>
-  <role>Utente2D</role>
-  <description>descrizione</description>
-  <numperrole>1</numperrole>
- </actor>
-</actors>
-<acts>
- <act>
-  <title>Atto1</title>
-  <description>descrizione atto1</description>
-  <scenes>
-   <scene>
-    <title>Scena1</title>
-    <description>descrizione scena 1</description>
-    <stage>stage1mondo1</stage>
-    <metaphors>
-     <metaphor>
-      <element>
-       <name>lavagna</name>
-       <event>click</event>
-       <roles>Tutti</roles>
-       <position_x>0</position_x>
-       <position_y>0</position_y>
-       <action>
-        <type>GoToQuiz</type>
-        <attribute>www.quiz1.it</attribute>
-        <success>
-         <successType>MessageToUser</successType>
-         <successAttribute>messaggio1success</successAttribute>
-        </success>
-        <failure>
-         <failureType>MessageToNoUser</failureType>
-         <failureAttribute>messaggio1failure</failureAttribute>
-        </failure>
-       </action>
-       </element>
-      </metaphor>
-    </metaphors>
-   </scene>
-   <scene>
-    <title>Scena2</title>
-    <description>descrizione scena 2</description>
-    <stage>stage2mondo1</stage>
-    <metaphors>
-      <metaphor>
-       <element>
-        <name>lavagna</name>
-        <event>click</event>
-        <roles>Tutti</roles>
-        <position_x>0</position_x>
-        <position_y>0</position_y>
-        <action>
-         <type>GoToQuiz</type>
-         <attribute>www.quiz2.it</attribute>
-         <success>
-          <successType>MessageToUser</successType>
-          <successAttribute>messaggio2success</successAttribute>
-         </success>
-         <failure>
-          <failureType>MessageToNoUser</failureType>
-          <failureAttribute>messaggio2failure</failureAttribute>
-         </failure>
-         </action>
-         </element>
-        </metaphor>
-    </metaphors>
-    </scene>
-  </scenes>
- </act>
- </acts></project>
+ 	<about>
+  		<creator>
+  			<user>Cinzia Rosato</user>
+  			<userId>cinzia.rosato@gmail.it</userId>
+  		</creator>
+  	
+  		<session>
+  	 		<sessionId>55182e82-9f45-5a71-ee5f-7fb3127e8946</sessionId>
+  	 		<password>password</password>
+ 	 	</session>
+ 	 
+	  	<description>z</description>
+	  	<screenplay>z</screenplay>
+	  	<title>CinzProject</title>
+  
+	  	<mondo>
+	  		<name>mondo1</name>
+	  		<path>x3d/mondo1.x3d</path>
+	  	</mondo>
+  	
+	  	<webserverurl>http://localhost:8080/</webserverurl>
+	</about>
+
+	<actors>
+	 	<actor>
+	 		<role>Utente2D</role>
+	  		<description>descrizione</description>
+	  		<numperrole>1</numperrole>
+	 	</actor>
+	</actors>
+
+	<acts>
+	 	<act>
+	  		<title>Atto1</title>
+	  		<description>descrizione atto1</description>  	
+  			<scenes>
+  			
+   				<scene>
+    				<title>Scena1</title>
+    				<description>descrizione scena 1</description>
+    				<stage>stage1mondo1</stage>				
+    				<metaphors>
+    			 		<metaphor>
+      						<element>
+       							<name>lavagna</name>
+       							<event>click</event>
+       							<roles>Tutti</roles>
+       							<position_x>0</position_x>
+       							<position_y>0</position_y>				
+       							<action>
+       		 						<type>GoToQuiz</type>
+        							<attribute>www.quiz1.it</attribute>						
+        							<success>
+         								<successType>MessageToUser</successType>
+         								<successAttribute>messaggio1success</successAttribute>
+        							</success>
+        							<failure>
+         								<failureType>MessageToNoUser</failureType>
+         								<failureAttribute>messaggio1failure</failureAttribute>
+        							</failure>
+       							</action>
+       						</element>
+      					</metaphor>
+    				</metaphors>
+   				</scene>
+   
+   				<scene>
+    				<title>Scena2</title>
+    				<description>descrizione scena 2</description>
+    				<stage>stage2mondo1</stage>
+    				<metaphors>
+    			  		<metaphor>
+       						<element>
+        						<name>lavagna</name>
+        						<event>click</event>
+        						<roles>Tutti</roles>
+        						<position_x>0</position_x>
+        						<position_y>0</position_y>    					
+        						<action>
+         							<type>GoToQuiz</type>
+         							<attribute>www.quiz2.it</attribute>   						
+         							<success>
+    		 							<successType>MessageToUser</successType>
+      									<successAttribute>messaggio2success</successAttribute>
+         							</success>
+         							<failure>
+          								<failureType>MessageToNoUser</failureType>
+          								<failureAttribute>messaggio2failure</failureAttribute>
+         							</failure>
+         						</action>
+         					</element>
+    					</metaphor>
+					</metaphors>
+    			</scene>
+    			
+  			</scenes>
+ 		</act>
+	</acts>
+
+</project>

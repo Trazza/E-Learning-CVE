@@ -1,0 +1,198 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project>
+    <about>
+        <creator>
+            <user>GsaLab</user>
+            <userId>gsa.lab.international@gmail.com</userId>
+        </creator>
+        <session>
+            <sessionId>bf2b0f66-b66c-eea4-94a7-cb6946031f40</sessionId>
+            <password>password</password>
+        </session>
+        <description>descrizione del progetto</description>
+        <screenplay>descrizione_screen</screenplay> <!-- ?? -->
+        <title>titolo progetto</title>
+        <mondo>
+            <name>mondo1GSA</name>
+            <path>x3d/mondo1.x3d</path> <!-- xml non x3d (cmq non necessario)-->
+        </mondo>
+        <webserverurl>http://localhost:8080/</webserverurl>  
+    </about>
+    <actors>
+        <actor>
+            <role>Utente2D</role> 
+            <description>descrizione_utente</description>
+            <numperrole>1</numperrole>
+        </actor>
+    </actors>
+<acts>
+		<act>
+  			<title>Atto1</title>
+  			<description>descrizione_atto</description>
+  			<scenes>
+            <scene>
+    				    <title>Scena1_1</title> <!-- IMPORTANTE: serve identificativo unico della scena (necessario se si può scegliere la scena a cui passare) -->
+    				    <description>descrizione_scena_1</description>
+    				    <stage>piano_verde</stage> <!-- IMPORTANTE: deve indicare il nome corretto del file .x3d dello stage -->
+    				
+    				    <metaphors>
+     					      <metaphor>
+      						      <element>
+       							        <name>porta</name> <!-- IMPORTANTE: deve indicare il nome corretto del file .x3d dekk'oggetto-->
+       							        <event>click</event>
+       							        <roles>Tutti</roles>
+       							        <position_x>0</position_x>
+       							        <position_z>0</position_z> <!-- IMPORTANTE: modificare da pisition_y a position_z -->
+       							        <action>
+                                <type>GoToScene</type> 
+                                <attribute>Scena2</attribute>  <!-- IMPORTANTE: per 'GoToScene' deve indicare l'identificativo UNIVOCO della scena (es. Scena2 e non Scena2Atto1) -->
+                                <success>
+                                    <successType/>
+                                    <successAttribute/>
+                                </success>
+                                <failure>
+                                    <failureType/>
+                                    <failureAttribute/>
+                                </failure>
+                            </action>
+                        </element>
+                    </metaphor>
+                    <metaphor>
+   							        <element>
+                            <name>schermo</name>
+                            <event>click</event>
+                            <roles>Tutti</roles>
+                            <position_x>2</position_x>
+                            <position_z>0</position_z>
+                            <action>
+                                <type>GoToWebPage</type>
+                                <attribute>www.google.it</attribute> <!-- pagina wec VALIDA -->
+                                <success>
+                                    <successType/>
+                                    <successAttribute/>
+                                </success>
+                                <failure>
+                                    <failureType/>
+                                    <failureAttribute/>
+                                </failure>
+     							          </action>
+                        </element>
+     					      </metaphor>
+     					      <metaphor>
+                        <element>
+       							        <name>schermo</name> <!-- IMPORTANTE: deve indicare il nome corretto del file .x3d dekk'oggetto (es. scermo e NON scermo2) -->
+       							        <event>click</event>
+       							        <roles>Tutti</roles>
+       							        <position_x>4</position_x>
+       							        <position_z>0</position_z>
+       							        <action>
+                                <type>FileFromUser</type>
+                                <attribute>Aggiungi una foto </attribute>
+                                <success>
+                                    <successType/>
+                                    <successAttribute/>
+                                </success>
+                                <failure>
+                                    <failureType/>
+                                    <failureAttribute/>
+                                </failure>
+                            </action>
+                        </element>
+                    </metaphor>
+                    <metaphor>
+                        <element>
+                            <name>schermo</name>
+                            <event/>
+                            <roles/>
+                            <position_x>6</position_x>
+                            <position_z>0</position_z>
+                            <action>
+                                <type/>
+                                <attribute/>
+                                <success>
+                                    <successType/>
+                                    <successAttribute/>
+                                </success>
+                                <failure>
+                                    <failureType/>
+                                    <failureAttribute/>
+                                </failure>
+                            </action>
+                        </element>
+                    </metaphor>
+                    <metaphor>
+                        <element>
+                            <name>tavolo</name>
+                            <event>click</event>
+                            <roles>Tutti</roles>
+                            <position_x>8</position_x>
+                            <position_z>0</position_z>
+                            <action>
+         							          <type>GoToTable</type> <!-- che significa? -->
+         						            <attribute/>
+         					              <success>
+                                    <successType/>
+                                    <successAttribute/>
+           						          </success>
+                                <failure>
+                                    <failureType/>
+                                    <failureAttribute/>
+                                </failure>
+                            </action>
+                        </element>
+          				  </metaphor>
+          			</metaphors>
+          	</scene>
+          	<scene>
+          			<title>Scena2</title>
+          			<description>descrizione_scena2</description>
+          			<stage>piano_viola</stage>
+          			<metaphors>
+          	 		    <metaphor>
+           			        <element>
+           					        <name>lavagna</name>
+                            <event>click</event>
+                            <roles>Tutti</roles>
+           			            <position_x>0</position_x>  <!-- <position_z/> in caso non siano inseriti valori inserire una posizione di DEFAULT -->
+                            <position_z>0</position_z>
+                            <action>
+            						        <type>FileFromUser</type>
+            						        <attribute>file1 </attribute> 
+            						        <success>
+             							          <successType/>
+             							          <successAttribute/>
+             			              </success>
+            						        <failure>
+            	 						          <failureType/>
+             							          <failureAttribute/>
+                                </failure>
+             					      </action>
+                        </element>
+             			  </metaphor>
+             			  <metaphor>
+             				<element>
+              					<name>lavagna</name>
+              					<event>click</event>
+              					<roles>Tutti</roles>
+              					<position_x>2</position_x>
+              					<position_z>2</position_z>
+              					<action>
+                            <type>GoToQuiz</type>
+                            <attribute>Aggiungi url del quiz</attribute>
+                            <success>
+                                <successType>MessageToUser</successType>
+                                <successAttribute>Successo!</successAttribute>
+                            </success>
+                            <failure>
+                                <failureType>MessageToNoUser</failureType>
+                                <failureAttribute>Fallimento!</failureAttribute> 
+                            </failure>
+             					  </action>
+            				</element>
+        				</metaphor>
+    				</metaphors>
+				</scene>
+		</scenes>
+	</act>
+</acts>
+</project>
