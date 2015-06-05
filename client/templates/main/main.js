@@ -48,29 +48,23 @@ var activity_for_all = Alerts.find();
 
 var handle_activity_for_all = activity_for_all.observeChanges({ 
 	changed: function (id, activity) { 
-		var activ = Alerts.findOne(id)
-		console.log('change:'+ id + '  activ.name:' + activ.name + ' value:'+ activ.value + ' room:' + activ.room);
-		console.log('Session.get(room_id) = '+ Session.get('room_id'));
-		console.log('activity.room = '+ activ.room);
+    var user = Players.findOne(Meteor.userId());
+		var activ = Alerts.findOne(id);
+		console.log('change: '+ id + ' -  activ.name: ' + activ.name + ' - value: '+ activ.value + ' - room: ' + activ.room);
+		console.log('Session: '+ user.room);
+		console.log('activity.room:  = '+ activ.room);
 		//verifichiamo il tipo di evento scatenato
-		switch (activ.name){
+		switch (activ.type){
 			case 'quiz':
 				if(activ.value == true){
-				
-					if (typeof(Session.get('user_id')) != 'undefined' && Session.get('room_id') == activ.room) {
-						
-						//
-						console.log('imposta quiz');
-						Meteor.call('setPlayerActivity',  Session.get('user_id'), activ.name );
-						/*
-						AntiModals.overlay('quiz_template', {
-      						modal: true,
-      					});
-      					*/
-      				}
-      			}
-      			break;
+					  if (typeof user._id != 'undefined' && user.room == activ.room) {
+
+						    console.log('imposta quiz');
+						    Meteor.call('setPlayerActivity', activ.name, activ.type );	
+      		  }
       	}
+      	break;
+      }
 	},
 	
 });
@@ -79,13 +73,10 @@ var handle_activity_for_all = activity_for_all.observeChanges({
 var players_activity = Players.find();
 var handle_players_activity = players_activity.observeChanges({
 	changed: function (id, user) {
-		if (id == Session.get('user_id')){
-			switch (user.activity){
+		if (id == Meteor.userId()){
+			switch (user.activityType){
 				case 'quiz':
-				
-				
-						//if (typeof(Session.get('user_id')) != 'undefined') {
-					
+						//if (typeof(Session.get('user_id')) != 'undefined') {		
 							//Meteor.call('setPlayerQuiz', Session.get('user_id'), "quiz" );	
 							AntiModals.overlay('quiz_template', {
       							modal: true,
@@ -130,16 +121,7 @@ UI.body.helpers({
 	'allPlayers': function () {
     	return Players.find({});
   	},
-  	 /*
-  	'objects': function () {
-    	return Objects.find({room: Session.get('room_id')});
-  	},
-	
-	'players': function () {
-    	return Players.find({room: Session.get('room_id')});
-  	},
-  */
-  
+
   // list of colors for color picker
   	'colors': function () {
     	return _.map(_.keys(colors), function (name) {
@@ -152,14 +134,7 @@ UI.body.helpers({
   // active color helper for color picker
   	'activeColor': function () {
     	return this.name === Session.get("color");
-  	},
-  /* // see if we are in login mode
-  	'loginMode': function () {
-    	return Session.equals("mode", "login");   
-  	}
-  */
-  
-  
+  	},  
 });// end helper
 
 
@@ -184,114 +159,238 @@ UI.body.events({
     }
     */
   },
-   'keydown': function(event) {
-   if (Meteor.userId() != null) {
-    event.preventDefault();
-    
-    console.log(event.which);
-    switch (event.which) {
-				// TRASLAZIONE
-				case 38: // freccia su
-					z = String(parseFloat(Players.findOne(Session.get('user_id')).z) - 0.5);
-    				Players.update(
-    					{ _id: Session.get('user_id') }, 
-    					{ $set: //consente di modificare sono il parametro selezionato 
-    						{
-    							z: z, 
-    						}
-    					}
-    				)
-					break;
-				
-				case 40: // freccia giù	
-					z = String(parseFloat(Players.findOne(Session.get('user_id')).z) + 0.5);
-    				Players.update(
-    					{ _id: Session.get('user_id') }, 
-    					{ $set: //consente di modificare sono il parametro selezionato 
-    						{
-    							z: z, 
-    						}
-    					}
-    				)
-					break;
-				
-				case 37: //freccia sinistra	
-    				x = String(parseFloat(Players.findOne(Session.get('user_id')).x) - 0.5);
-    				Players.update(
-    					{ _id: Session.get('user_id') }, 
-    					{ $set: //consente di modificare sono il parametro selezionato 
-    						{
-    							x: x, 
-    						}
-    					}
-    				)	
-					break;
-					
-				case 39: // freccia destra
-					x = String(parseFloat(Players.findOne(Session.get('user_id')).x) + 0.5); 
-    				Players.update(
-    					{ _id: Session.get('user_id') }, 
-    					{ $set: //consente di modificare sono il parametro selezionato 
-    						{
-    							x: x, 
-    						}
-    					}
-    				)	
-					break;
-					
-				// ROTAZIONE
-				case 90: // Z
-					
-					break;
-					
-				case 67: // C
-					
-					break;
-					
-				// VIEWPOINT FIRST PERSON	
-				case 81: // Q
-					fp_view = String(parseFloat(Players.findOne(Session.get('user_id')).fp_view) + 0.1); 
-    				Players.update(
-    					{ _id: Session.get('user_id') }, 
-    					{ $set: //consente di modificare sono il parametro selezionato 
-    						{
-    							fp_view: fp_view, 
-    						}
-    					}
-    				)	
-					break;
-					
-				case 65: // A
-					fp_view = String(parseFloat(Players.findOne(Session.get('user_id')).fp_view) - 0.1); 
-    				Players.update(
-    					{ _id: Session.get('user_id') }, 
-    					{ $set: //consente di modificare sono il parametro selezionato 
-    						{
-    							fp_view: fp_view, 
-    						}
-    					}
-    				)	
-					break;
-				// VIEWPOINT		
-				case 80: // P  (prima persona)
-						
-						document.getElementById('first-person'+Session.get('user_id')).setAttribute('set_bind','true');
-						document.getElementById('viewpoint_1').setAttribute('set_bind','false');
-						document.getElementById('nav_id').setAttribute('type','lookAround');
-						document.getElementById('nav_id').setAttribute('explorationMode','zoom');
-						
-						
-					break;
-					
-				case 79: // O  (dall'alto)
-						
-						document.getElementById('viewpoint_1').setAttribute('set_bind','true');
-						document.getElementById('nav_id').setAttribute('type','none');
-						
-					break;
-			
-			}	
-	}
+  'keydown': function(event) {
+        
+
+
+    //************************ move ******************************
+    //        cam4
+    //   cam2  +  cam3
+    //        cam1
+        if (Meteor.userId() != null) {
+            event.preventDefault();
+            console.log(event.which);
+            //Meteor.call('move', event.which);
+            
+            var cam = Players.findOne(Meteor.userId()).cam;
+            var r = Players.findOne(Meteor.userId()).r;
+            var vel = 0.5;
+            //var id = 'fp_sin'+Meteor.userId();
+            var id;
+            //document.getElementById(Players.findOne(Meteor.userId()).cam+Meteor.userId()).setAttribute('set_bind','true');
+            switch (event.which) {
+            // TRASLAZIONE
+            case 38: // freccia su
+                      //Meteor.call('moveFront',cam, 0.5);
+                      switch (cam) {
+                      case 'fp1': 
+                                var z = Players.findOne(Meteor.userId()).z - vel; 
+                                console.log('z: '+z);
+                                Meteor.call('moveZ', z);
+                                break;   
+
+                      case 'fp4': 
+                                var z = Players.findOne(Meteor.userId()).z + vel;
+                                Meteor.call('moveZ', z);
+                                break;
+
+                      case 'fp2': 
+                                var x = Players.findOne(Meteor.userId()).x + vel;
+                                Meteor.call('moveX', x);
+                                break;
+
+                      case 'fp3':
+                                var x = Players.findOne(Meteor.userId()).x - vel;
+                                Meteor.call('moveX', x);
+                                break;
+
+                  }
+                      break;
+        
+            case 40: // freccia giù
+                      //Meteor.call('moveFront',cam, -0.5);
+                      switch (cam) {
+                      case 'fp1': 
+                                var z = Players.findOne(Meteor.userId()).z + vel; 
+                                Meteor.call('moveZ', z);
+                                break;   
+
+                      case 'fp4': 
+                                var z = Players.findOne(Meteor.userId()).z - vel;
+                                Meteor.call('moveZ', z);
+                                break;
+
+                      case 'fp2': 
+                                var x = Players.findOne(Meteor.userId()).x - vel;
+                                Meteor.call('moveX', x);
+                                break;
+
+                      case 'fp3':
+                                var x = Players.findOne(Meteor.userId()).x + vel;
+                                Meteor.call('moveX', x);
+                                break;
+
+                  }
+                      break;
+          
+            case 37: //freccia sinistra      
+                      console.log('SIN');                
+                      
+                      
+                       
+                      switch (cam) {
+                          case 'fp1': 
+                                    Meteor.call('cangeCam', 'fp3');
+                                    Meteor.call('cangeR', 1.57079633);
+                                    id = 'fp3'+Meteor.userId();                                    
+                                    break;   
+
+                          case 'fp2': 
+                                    Meteor.call('cangeCam', 'fp1');
+                                    Meteor.call('cangeR', 0);
+                                    id = 'fp1'+Meteor.userId();
+                                    break;
+
+                          case 'fp3': 
+                                    Meteor.call('cangeCam', 'fp4');
+                                    Meteor.call('cangeR', 3.14159265);
+                                    id = 'fp4'+Meteor.userId();
+                                    break;
+
+                          case 'fp4':
+                                    Meteor.call('cangeCam', 'fp2');
+                                    Meteor.call('cangeR', -1.57079633);
+                                    id = 'fp2'+Meteor.userId();
+                                    break;
+                      }
+                                        document.getElementById(id).setAttribute('set_bind','true');
+                      break;
+
+          
+            case 39: // freccia destra
+                      switch (cam) {
+                          case 'fp1': 
+                                    Meteor.call('cangeCam', 'fp2');
+                                    Meteor.call('cangeR', -1.57079633);
+                                    id = 'fp2'+Meteor.userId();
+                                    break;   
+
+                          case 'fp2': 
+                                    Meteor.call('cangeCam', 'fp4');
+                                    Meteor.call('cangeR', 3.14159265);
+                                    id = 'fp4'+Meteor.userId();
+                                    break;
+
+                          case 'fp3': 
+                                    Meteor.call('cangeCam', 'fp1');
+                                    Meteor.call('cangeR', 0);
+                                    id = 'fp1'+Meteor.userId();
+                                    break;
+
+                          case 'fp4':
+                                    Meteor.call('cangeCam', 'fp3');
+                                    Meteor.call('cangeR', 1.57079633);
+                                    id = 'fp3'+Meteor.userId();
+                                    break;
+
+                      }
+                      
+                      document.getElementById(id).setAttribute('set_bind','true');
+                      break;
+
+
+
+                    
+                  /* comandi per impostare l'inclintura della cam
+                  case 81:// Q
+                      
+                      var x = String((document.getElementById(id).getAttribute('orientation')).split(' ')[0]);
+                      var y = String((document.getElementById(id).getAttribute('orientation')).split(' ')[1]);
+                      var z = String((document.getElementById(id).getAttribute('orientation')).split(' ')[2]);
+                      var r = String((document.getElementById(id).getAttribute('orientation')).split(' ')[3])
+                      x = eval(x + ' + 0.1');
+                      var orient =  x+' '+y+' '+z+' '+r;
+                      console.log('orientation = '+orient);
+                      document.getElementById(id).setAttribute('orientation', orient);
+                      break;
+                  case 65: // A
+                      var x = String((document.getElementById(id).getAttribute('orientation')).split(' ')[0]);
+                      var y = String((document.getElementById(id).getAttribute('orientation')).split(' ')[1]);
+                      var z = String((document.getElementById(id).getAttribute('orientation')).split(' ')[2]);
+                      var r = String((document.getElementById(id).getAttribute('orientation')).split(' ')[3])
+                      x = eval(x + ' - 0.1');
+                      var orient =  x+' '+y+' '+z+' '+r;
+                      console.log('orientation = '+orient);
+                      document.getElementById(id).setAttribute('orientation', orient);
+                      break;
+                  case 87: // W y+
+                      var x = String((document.getElementById(id).getAttribute('orientation')).split(' ')[0]);
+                      var y = String((document.getElementById(id).getAttribute('orientation')).split(' ')[1]);
+                      var z = String((document.getElementById(id).getAttribute('orientation')).split(' ')[2]);
+                      var r = String((document.getElementById(id).getAttribute('orientation')).split(' ')[3])
+                      y = eval(y + ' + 0.1');
+                      var orient =  x+' '+y+' '+z+' '+r;
+                      console.log('orientation = '+orient);
+                      document.getElementById(id).setAttribute('orientation', orient);
+                      break;
+
+                  case 83: // S
+                      var x = String((document.getElementById(id).getAttribute('orientation')).split(' ')[0]);
+                      var y = String((document.getElementById(id).getAttribute('orientation')).split(' ')[1]);
+                      var z = String((document.getElementById(id).getAttribute('orientation')).split(' ')[2]);
+                      var r = String((document.getElementById(id).getAttribute('orientation')).split(' ')[3])
+                      y = eval(y + ' - 0.1');
+                      var orient =  x+' '+y+' '+z+' '+r;
+                      console.log('orientation = '+orient);
+                      document.getElementById(id).setAttribute('orientation', orient);
+                      break;
+
+                  case 69: // E
+                      var x = String((document.getElementById(id).getAttribute('orientation')).split(' ')[0]);
+                      var y = String((document.getElementById(id).getAttribute('orientation')).split(' ')[1]);
+                      var z = String((document.getElementById(id).getAttribute('orientation')).split(' ')[2]);
+                      var r = String((document.getElementById(id).getAttribute('orientation')).split(' ')[3])
+                      z = eval(z + ' + 0.1');
+                      var orient =  x+' '+y+' '+z+' '+r;
+                      console.log('orientation = '+orient);
+                      document.getElementById(id).setAttribute('orientation', orient);
+                      break;
+                  case 68: // D
+                      var x = String((document.getElementById(id).getAttribute('orientation')).split(' ')[0]);
+                      var y = String((document.getElementById(id).getAttribute('orientation')).split(' ')[1]);
+                      var z = String((document.getElementById(id).getAttribute('orientation')).split(' ')[2]);
+                      var r = String((document.getElementById(id).getAttribute('orientation')).split(' ')[3])
+                      z= eval(z + ' - 0.1');
+                      var orient =  x+' '+y+' '+z+' '+r;
+                      console.log('orientation = '+orient);
+                      document.getElementById(id).setAttribute('orientation', orient);
+                      break;
+
+                  case 82: // R
+                      var x = String((document.getElementById(id).getAttribute('orientation')).split(' ')[0]);
+                      var y = String((document.getElementById(id).getAttribute('orientation')).split(' ')[1]);
+                      var z = String((document.getElementById(id).getAttribute('orientation')).split(' ')[2]);
+                      var r = String((document.getElementById(id).getAttribute('orientation')).split(' ')[3])
+                      r = eval(r + ' + 0.1');
+                      var orient =  x+' '+y+' '+z+' '+r;
+                      console.log('orientation = '+orient);
+                      document.getElementById(id).setAttribute('orientation', orient);
+                      break;
+
+                  case 70: // F
+                      var x = String((document.getElementById(id).getAttribute('orientation')).split(' ')[0]);
+                      var y = String((document.getElementById(id).getAttribute('orientation')).split(' ')[1]);
+                      var z = String((document.getElementById(id).getAttribute('orientation')).split(' ')[2]);
+                      var r = String((document.getElementById(id).getAttribute('orientation')).split(' ')[3])
+                      r = eval(r + ' - 0.1');
+                      var orient =  x+' '+y+' '+z+' '+r;
+                      console.log('orientation = '+orient);
+                      document.getElementById(id).setAttribute('orientation', orient);
+                  */
+
+            }
+            	
+        }
   }
 });
 

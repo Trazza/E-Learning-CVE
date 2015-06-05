@@ -7,13 +7,14 @@
 
 Template.quiz_template.events({
 	"click #esci_quiz": function(e, t) {
-		if (Players.find({activity: 'quiz', room: Session.get('room_id')}).count() == 1) {
-			Meteor.call('setActivity', 'quiz', Session.get('room_id'), false);			
+		var player = Players.findOne(Meteor.userId());
+		if (Players.find({activityType: 'quiz', room: player.room}).count() == 1) {
+			Meteor.call('setActivity', player.room, player.activityName, 'quiz', false);			
 		}
 		
-		Meteor.call('setPlayerActivity', Session.get('user_id'),  null );
+		Meteor.call('setPlayerActivity', null,  null );
 		
-    	console.log('Numero players con quiz = '+ Players.find({activity: 'quiz', room: Session.get('room_id')}).count());
+    	console.log('Numero players con quiz = '+ Players.find({activityType: 'quiz', room: player.room }).count());
     	AntiModals.dismissAll();
   		
   		

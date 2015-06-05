@@ -91,39 +91,38 @@ if (Meteor.isServer) {
 		//	inserisce un nuovo utente nella collezione Players
 		//
 		//****************************************************************
-		'insertPlayer': function(room, scene, x, y, z, color, y_view, fp_view){
+		'insertPlayer': function(){
 
   			return Players.insert({  
                 _id: Meteor.userId(),	                       // ID utente 	
-                room: room,			                             //	sessionId  sessione attuale del player
-                scene: scene,			                           //	scena attuale del player 
+                room: null,			                             //	sessionId  sessione attuale del player
+                scene: null,			                           //	scena attuale del player 
  	        		  nome: Meteor.user().services.google.name, 	 // nome (ricavata da login di google)
     	      		email: Meteor.user().services.google.email,  // gmail dell'account 
-    	      		y_view: y_view, 		                         //	altezza della camera
-    	      		fp_view: fp_view,		                         // first person view
-    	      		x: x,					                               // posizione dell'avatar sull'asse x
-    	      		y: y,					                               // y (probabilmente sarà di default)
-    	      		z: z,					                               // z
-    	      		color: color,			                           //	colore scelto per l'avatar dall'utente
-    	      		activity: null 			                         //	attività collaborativa attualmente svolta dal player (es. quiz)
-        		});
+    	      		x: null,					                               // posizione dell'avatar sull'asse x
+    	      		z: null,
+                r: null,					                               // z
+                cam: null,                                 // inquadratura 
+    	      		color: null,			                           //	colore scelto per l'avatar dall'utente
+    	      		activityName: null, 			                   //	attività collaborativa attualmente svolta dal player (es. quiz)
+        		    activityType: null
+            });
         		
 		},
 
-    'updatePlayer': function(room, scene, x, y, z, color, y_view, fp_view){
+    'updatePlayer': function(room, scene, color){
 
         return Players.update(
                       {_id: Meteor.userId()},
                       { $set:
                           {
-                              room: room,      //  sessionId  sessione attuale del player
+                              room: room,       //  sessionId  sessione attuale del player
                               scene: scene,     //  scena attuale del player                     
-                              x: x,         //  posizione dell'avatar sull'asse x
-                              y: y,         //  y (probabilmente sarà di default)
-                              z: z,         //  z
-                              y_view: y_view,     //  altezza della camera
-                              fp_view: fp_view,   //  first person view
-                              color: color,     //  colore scelto per l'avatar dall'utente
+                              color: color,
+                              x: 3,                                        // posizione dell'avatar sull'asse x
+                              z: 0,
+                              r: 0,                                        // z
+                              cam: 'fp1',      //  colore scelto per l'avatar dall'utente
                           }
                       }
         );
@@ -140,6 +139,53 @@ if (Meteor.isServer) {
                       }
         );
     },
+
+    'moveX': function(value){
+                Players.update(
+                        { _id: Meteor.userId() }, 
+                        { $set: //consente di modificare sono il parametro selezionato 
+                          { 
+                            x: value, 
+                           }
+                        }
+                );
+    },
+
+    'moveZ': function(value){
+                
+                Players.update(
+                        { _id: Meteor.userId()}, 
+                        { $set: //consente di modificare sono il parametro selezionato 
+                          { 
+                            z: value, 
+                           }
+                        }
+                );
+    }, 
+
+    'cangeR': function(value){
+                
+                Players.update(
+                        { _id: Meteor.userId() }, 
+                        { $set: //consente di modificare sono il parametro selezionato 
+                          { 
+                            r: value, 
+                           }
+                        }
+                );
+    }, 
+
+    'cangeCam': function(value){
+               
+                Players.update(
+                        { _id: Meteor.userId() }, 
+                        { $set: //consente di modificare sono il parametro selezionato 
+                          { 
+                            cam: value, 
+                           }
+                        }
+                );
+    }, 
 
 		'gAccount': function() {
 			var email = Meteor.user().services.google.email;
@@ -159,13 +205,14 @@ if (Meteor.isServer) {
 		},
 		
 		//
-		'setPlayerActivity': function(id, activity) {
-			console.log('setPlayerActivity: '+ id + ' = '+ activity);
+		'setPlayerActivity': function(name, type) {
+			console.log('setPlayerActivity: '+ name + ' = '+ type);
 			return Players.update(
-    					{ _id: id }, 
+    					{ _id: Meteor.userId() }, 
     					{ $set: //consente di modificare sono il parametro selezionato 
     						{
-    							activity: activity, 
+    							activityName: name, 
+                  activityType: type
     						}
     					}
     				)	
@@ -207,10 +254,10 @@ if (Meteor.isServer) {
 	
 // ---------------- ALERTS ---------------
 
-		'setActivity': function(name, room, value){
+		'setActivity': function(session, name, type, value){
 			console.log('setActivity: '+ name + ' = '+ value);
 				return Alerts.update(
-    							{ name: name, room: room }, 
+    							{ room: session, name: name, type: type}, 
     							{ $set: //consente di modificare sono il parametro selezionato 
     								{
     									value: value, 
@@ -222,13 +269,13 @@ if (Meteor.isServer) {
 		
 		
 
-		'insertActivity': function(name, room){
+		'insertActivity': function(session, name, type){
 			
 			return Alerts.insert({
-					room: room,			// 	sessionId
-					// scene: scene, 	//	scena
+					room: session,			// 	sessionId
 					name: name,			//	nome dell'attività collaborativa svolta (es. quiz)
-					value: false		//	enable: quando settato a true scatena l'evento associato su tutti client
+					type: type, 
+          value: false		//	enable: quando settato a true scatena l'evento associato su tutti client
 				});
 		},
 
@@ -366,9 +413,9 @@ if (Meteor.isServer) {
 
   //------------------- Scenes --------------------------------------
 
-      'insertScene': function(session, title, descr, stage){
+      'insertScene': function(id, session, title, descr, stage){
         return Scenes.insert({
-            
+                id: id, 
                 room: session,     // Id della sessione a cui appartiene la scena 
                 title: title,      // titolo della scena   
                 descr: descr,      // Descrizione della scena 
@@ -632,6 +679,9 @@ if (Meteor.isServer) {
               console.log('------------ '+title+' -----------------');
               verify += verifyUndef('title',title);
 
+              var id_scene =   jsonText.project.acts[0].act[0].scenes[0].scene[i].id_scena;
+              verify += verifyUndef('id_scena',id_scene);
+
               var description =   jsonText.project.acts[0].act[0].scenes[0].scene[i].description;
               verify += verifyUndef('description',description);
 
@@ -640,8 +690,8 @@ if (Meteor.isServer) {
 
               if (verify == 0) { 
                   console.log('Dati Scena ok: inserimento');
-                  //'insertScene': function(session, title, descr, stage)
-                  Meteor.call('insertScene', session, title, description, stage);
+                  //'insertScene': function(id,        session, title, descr,      stage)
+                  Meteor.call('insertScene', id_scene, session, title, description, stage);
               } else {
                   console.log('ERRORE: alcuni dati non sono stati trovati. Errore nella struttura XML');                
               }
@@ -684,8 +734,8 @@ if (Meteor.isServer) {
 
                   if (verify == 0) { 
                       console.log('Dati oggetto ok: inserimento');
-                        //insertObject': function(room,    scene, name, event, action, attr,      succF,        succA,            failF,        failA,          x,            z )
-                      Meteor.call('insertObject', session, title, name, event, action, attribute, successType, successAttribute, failureType, failureAttribute, position_x, position_z ); 
+                        //insertObject': function(room,    scene,    name, event, action, attr,      succF,        succA,            failF,        failA,          x,            z )
+                      Meteor.call('insertObject', session, id_scene, name, event, action, attribute, successType, successAttribute, failureType, failureAttribute, position_x, position_z ); 
                     
                   } else {
                       console.log('ERRORE: alcuni dati non sono stati trovati. Errore nella struttura XML');

@@ -23,17 +23,16 @@ Accounts.onLogin( function (){
     					console.log('Attenzione: Utente riloggato');
               //Session.set('room', Players.findOne(Meteor.userId()).room );
               //Session.set('scene', Players.findOne(Meteor.userId()).scene);
-              console.log('Sessione: '+Session.get('room'));
-              console.log('Scene: '+Session.get('scene'));
+              console.log('Sessione: '+ Players.findOne(Meteor.userId()).room);
+              console.log('Scene: '+Players.findOne(Meteor.userId()).scene);
     			}else{
 
 						  
  		
-						  Session.set("user_id", user_id); 
+						  //Session.set("user_id", user_id); 
               //Meteor.call('show');
-              //insertPlayer': function(room_id, scene, x, y, z, color, y_view, fp_view)
-              //Meteor.call('insertPlayer', Session.get('room_id'), x, y, z, color, y_view, fp_view);
-              Meteor.call('insertPlayer', null, null, null, null, null, null, null, null);
+             
+              Meteor.call('insertPlayer');
 					}	
 	}, 2000 );			
 	
@@ -70,13 +69,7 @@ Template.user_login.events({
 
 Template.user_login.helpers({
 
-	roomSelected: function() {
-		return $('#rooms').value;
-	},
 	    
-  activeRoom: function () {
-    	return Rooms.find({_id: Session.get("room_id")});
-  }
    
 });
 
@@ -101,9 +94,9 @@ Template.user_logout.events({
 		//$("#nome_utente_log").empty();
 		
 		Meteor.call('removePlayer', Meteor.userId());
-		Session.set('user_id', null);
-		Session.set('room', null);	
-    Session.set('scene', null);
+		//Session.set('user_id', null);
+		//Session.set('room', null);	
+    //Session.set('scene', null);
 		Meteor.logout();
 		//Players.remove(Session.get('user_id'));
 		window.setTimeout( function () {
@@ -137,32 +130,28 @@ Template.select_session.events({
             return;
         } else {
             var session = t.find('#rooms').value;  // id la sessione in cui si collega il player 
-            console.log('session:'+session);
             var pass = Rooms.findOne({session: session}).pass;
-            //console.log('password: '+pass);
             var password = prompt('Inserisci la password' , pass);
             if(pass == password){
                 
-                var scene = Scenes.findOne({room: session}).title; // prima scena della sessione (è sempr la prima scena caricata)
-                console.log('scene: '+scene); 
+                var scene = Scenes.findOne({room: session}).id; // prima scena della sessione (dovrebbe essere la prima scena caricata)
+                
                 //posizione iniziale della videocamera first-person
-                var y_view = "2.5";
-                var fp_view = "0";
+                
                 //posizione iniziale player
-                var x = "3";
-                var y = "0";
-                var z = "0";
+               
                 var color = Random.choice(colors[Session.get("color")]);
 
 
                 //'updatePlayer': function (room_id, scene, x, y, z, color, y_view, fp_view){
-                Session.set('room', session); 
-                Session.set('scene', scene );
-                Meteor.call('updatePlayer', session, scene, x, y, z, color, y_view, fp_view);
+                //Session.set('room', session); 
+                //Session.set('scene', scene );
+                Meteor.call('updatePlayer', session, scene, color);
+                console.log('session:'+Players.findOne(Meteor.userId()).room);
+                console.log('scene: '+Players.findOne(Meteor.userId()).scene); 
                 /*
                 window.setTimeout( function () {
                     location.reload(); //riaggiorna la pagina per pulire gli oggetti che non servono
-                    //$('#login-button').show();
                 }, 2000 );
                 */
             } else {
@@ -200,7 +189,7 @@ Template.select_session.helpers({
   //tutte le sessioni (.xml) create dall'utente loggato
   myRooms: function() {
       // A causa dell'attesa nel caricare il Player nella collection può segalare un errore email: 'undefined'   
-     return Rooms.find({userId: Players.findOne({_id: Meteor.userId()}).email});
+     return Rooms.find({userId: Players.findOne(Meteor.userId()).email});
   },
 
 
@@ -230,7 +219,7 @@ Template.exit_session.helpers({
   },
 
   'scene': function () {
-      return Players.findOne({_id: Meteor.userId()}).scene;
+      return Scenes.findOne({id: Players.findOne({_id: Meteor.userId()}).scene}).title;
   }
 
 });
@@ -240,11 +229,11 @@ Template.exit_session.events({
   'click #exitSession' : function(e, t){
 
         
-      //'updatePlayer': function(room, scene, x, y, z, color, y_view, fp_view){
-      Meteor.call('updatePlayer', null, null, null, null, null, null, null, null);       
-      Session.set('room', null); 
-      Session.set('scene', null);
-      location.reload();
+      //'updatePlayer': function(room, scene, x, y, z, color){
+      Meteor.call('updatePlayer', null, null, null);       
+      //Session.set('room', null); 
+      //Session.set('scene', null);
+      //location.reload();
 
           
   },

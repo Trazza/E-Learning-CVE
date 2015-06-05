@@ -6,11 +6,7 @@
 		<meta name="generator" content="Blender 2.66 (sub 1)" />
 	</head>
 	<Scene>
-		<NavigationInfo headlight="false"
-		                visibilityLimit="0.0"
-		                type='"EXAMINE", "ANY"'
-		                avatarSize="0.25, 1.75, 0.75"
-		                />
+		
 		
 		<Transform DEF="$$$DUMMY_IKEA_Mola_TRANSFORM"
 		           translation="1.100381 1.604539 -0.582153"

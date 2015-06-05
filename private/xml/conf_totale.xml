@@ -31,7 +31,8 @@
   			<description>descrizione_atto</description>
   			<scenes>
             <scene>
-    				    <title>Scena1_1</title> <!-- IMPORTANTE: serve identificativo unico della scena (necessario se si può scegliere la scena a cui passare) -->
+    				    <title>Scena1_1</title>
+                <id_scena>Scena11</id_scena>
     				    <description>descrizione_scena_1</description>
     				    <stage>piano_verde</stage> <!-- IMPORTANTE: deve indicare il nome corretto del file .x3d dello stage -->
     				
@@ -45,7 +46,7 @@
        							        <position_z>0</position_z> <!-- IMPORTANTE: modificare da pisition_y a position_z -->
        							        <action>
                                 <type>GoToScene</type> 
-                                <attribute>Scena2</attribute>  <!-- IMPORTANTE: per 'GoToScene' deve indicare l'identificativo UNIVOCO della scena (es. Scena2 e non Scena2Atto1) -->
+                                <attribute>Scena21</attribute>  <!-- IMPORTANTE: per 'GoToScene' deve indicare l'identificativo UNIVOCO della scena (es. Scena2 e non Scena2Atto1) -->
                                 <success>
                                     <successType/>
                                     <successAttribute/>
@@ -145,6 +146,7 @@
           	</scene>
           	<scene>
           			<title>Scena2</title>
+                <id_scena>Scena21</id_scena>
           			<description>descrizione_scena2</description>
           			<stage>piano_viola</stage>
           			<metaphors>

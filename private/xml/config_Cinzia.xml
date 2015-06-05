@@ -33,6 +33,7 @@
   <scenes>
    <scene>
     <title>Scena1</title>
+    <id_scena>Scena11</id_scena>
     <description>descrizione scena 1</description>
     <stage>stage1mondo1</stage>
     <metaphors>
@@ -61,6 +62,7 @@
    </scene>
    <scene>
     <title>Scena2</title>
+    <id_scena>Scena21</id_scena>
     <description>descrizione scena 2</description>
     <stage>stage2mondo1</stage>
     <metaphors>
