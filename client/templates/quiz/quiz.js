@@ -9,10 +9,11 @@ Template.quiz_template.events({
 	"click #esci_quiz": function(e, t) {
 		var player = Players.findOne(Meteor.userId());
 		if (Players.find({activityType: 'quiz', room: player.room}).count() == 1) {
-			Meteor.call('setActivity', player.room, player.activityName, 'quiz', false);			
+			//Meteor.call('setActivity', player.room, player.activityName, 'quiz', false);
+			Alerts.findOne({room: player.room, name: player.activityName, type: 'quiz'}).set(false);			
 		}
 		
-		Meteor.call('setPlayerActivity', null,  null );
+		Players.findOne(Meteor.userId()).setActivity(null, null);
 		
     	console.log('Numero players con quiz = '+ Players.find({activityType: 'quiz', room: player.room }).count());
     	AntiModals.dismissAll();

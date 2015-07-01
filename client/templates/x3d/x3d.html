@@ -1,5 +1,5 @@
 <template name="x3d_template" >
-	<x3d>
+	<x3d id='x3d_id'>
 	  <scene>
 	  	<!--<navigationinfo id="nav_id" type="none" headlight="false"></navigationinfo> -->
 	  	
@@ -81,7 +81,7 @@
                    isActive = '{{fp3Active}}'>
             </Viewpoint> 
 	    	
-	    			<transform id="{{_id}}" translation="{{x}} 0 {{z}}" scale="0.5 0.5 0.5" rotation="0 1 0 {{r}}">
+	    			<transform id="{{_id}}" translation="{{x}} 0 {{z}}" scale="0.5 0.5 0.5" rotation="0 1 0 {{r}}" >
        	 				<inline nameSpaceName="{{_id}}" 
             					mapDEFToID="true"
             					onload='Meteor.call("all_players_color", "{{_id}}", "{{color}}"), Meteor.call("onLoadPlayer");'

@@ -4,7 +4,19 @@
 //	http://docs.meteor.com/#/full/publishandsubscribe
 //
 //****************************************************
+
+
+//pubblico anche l'insieme di informazioni ricavate dal google account
+Meteor.publish("userData", function () {
+  if (this.userId) {
+    return Meteor.users.find({_id: this.userId});
+  } else {
+    this.ready();
+  }
+});
+
 Meteor.publish("objects", function () {
+  //return Objects.find({room: Players.findOne(this.userId()).room, scene: Players.findOne(this.userId()).scene});
   return Objects.find({});
 });
 
@@ -12,11 +24,8 @@ Meteor.publish("uploads", function () {
   return Uploads.find({});
 });
 
-Meteor.publish("players", function () {
-  return Players.find({});
-});
-
 Meteor.publish("alerts", function () {
+  //return Alerts.find({room: Players.findOne(this.userId()).room});
   return Alerts.find({});
 });
 
@@ -25,11 +34,54 @@ Meteor.publish("rooms", function () {
 });
 
 Meteor.publish("scenes", function () {
+  //return Scenes.find({id: Players.findOne(this.userId()).scene});
   return Scenes.find({});
+});
+
+Meteor.publish("players", function () {
+  //if (Meteor.userId()){
+  //  return Players.find({room: Players.findOne(Meteor.userId()).room, scene: Players.findOne(Meteor.userId()).scene});
+  //} else {
+      return Players.find({});
+  //}
+  
 });
 
 
 
+
+
+
+
+
+
+
+//*********************************************************************************************
+// 
+//  https://github.com/mizzao/meteor-user-status
+//
+//  la funzione serve a verificare se l'utente, anche se loggato, è connesso al gioco,
+//  in quanto il login può rimanere anche se l'utente non è connesso al portale (tipo facebook)
+//
+//*********************************************************************************************
+
+Meteor.users.find({ "status.online": true }).observe({
+  added: function(user) {
+    console.log("-----------------------------------");
+    console.log('ON');
+    console.log(user._id);
+  },
+  removed: function(user) {
+    if (typeof user._id != 'undefined'){
+          console.log("-----------------------------------");
+          console.log('OFF');
+          console.log(user._id);
+          //Meteor.call('updatePlayer', id._id, null, null, null);
+
+          Players.findOne(user._id).set(null, null, null);  //questo metodo può generare errore al logout in quanto la collection Players potrebbe aggiornarsi dopo il controllo  ._id != undefined
+    }
+  }
+});
 
 
 
@@ -39,8 +91,11 @@ if (Meteor.isServer) {
 
 	Meteor.methods({
 	
-	
+
 		'prova': function(){
+      console.log("-----------------------------------");
+      console.log("Numero user loggati: "+Meteor.users.find().count());
+      console.log(Meteor.users.findOne());
 			//console.log(Meteor.user().services.google.name);
 			//Meteor.log.info('prova logfile');
   			return;
@@ -55,34 +110,13 @@ if (Meteor.isServer) {
   			return;
   		},	
   		
-  		
-  		'insertLog': function(){
-  			//var fs = require('fs');
-			var LOG_PATH = '/logFile.txt';
-  			//fs.writeFileSync(LOG_PATH, "Prova log!");
-			console.log(LOG_PATH);
-			
-			var fso = new ActiveXObject("Scripting.FileSystemObject");
-    		var fh = fso.OpenTextFile("/logFile.txt", 8, false, 0);
-    		fh.WriteLine('Prova LOG');
-    		fh.Close();
-    	},
-
-
-
+      /*
    		'show': function(){
-  			
-			console.log('nome: '+ Meteor.user().services.google.name);
-			//console.log('email: '+ Meteor.user().services.google.emails[0]);
-			//console.log('email: '+ Meteor.user().services['google'].email);
-			console.log('email: '+ Meteor.user().services.google.email);
-			console.log('GOOGLE');
-			console.log(Meteor.user().services);
-			console.log('SERVICES');
-			//console.log(Meteor.user().services.resume);
-			console.log('_id: '+Meteor.userId());
-			console.log('MyRooms: '+Rooms.find({userId: Meteor.user().services.google.email}));
+        		console.log(Meteor.user().services);
+        		console.log('nome: '+ Meteor.user().services.google.name);
+        		console.log('email: '+ Meteor.user().services.google.email);
     	},
+      */
 
 // ------------ PLAYERS -------------------------
 		
@@ -98,126 +132,22 @@ if (Meteor.isServer) {
                 room: null,			                             //	sessionId  sessione attuale del player
                 scene: null,			                           //	scena attuale del player 
  	        		  nome: Meteor.user().services.google.name, 	 // nome (ricavata da login di google)
-    	      		email: Meteor.user().services.google.email,  // gmail dell'account 
-    	      		x: null,					                               // posizione dell'avatar sull'asse x
-    	      		z: null,
-                r: null,					                               // z
-                cam: null,                                 // inquadratura 
-    	      		color: null,			                           //	colore scelto per l'avatar dall'utente
+    	      		x: null,					                           // posizione dell'avatar sull'asse x
+    	      		z: null,                                     // posizione dell'avatar sull'asse z
+                r: null,					                           // grado di rotazione dell'avatar    
+                cam: null,                                   // inquadratura 
+    	      		color: null,			                           //	colore dell'avatar
     	      		activityName: null, 			                   //	attività collaborativa attualmente svolta dal player (es. quiz)
-        		    activityType: null
+        		    activityType: null                           // Tipo di attivita collaborativa svolta dall'avatar
             });
         		
 		},
 
-    'updatePlayer': function(room, scene, color){
-
-        return Players.update(
-                      {_id: Meteor.userId()},
-                      { $set:
-                          {
-                              room: room,       //  sessionId  sessione attuale del player
-                              scene: scene,     //  scena attuale del player                     
-                              color: color,
-                              x: 3,                                        // posizione dell'avatar sull'asse x
-                              z: 0,
-                              r: 0,                                        // z
-                              cam: 'fp1',      //  colore scelto per l'avatar dall'utente
-                          }
-                      }
-        );
-            
-    },
-
-    'scenePlayer': function(scene){
-        return Players.update(
-                      {_id: Meteor.userId()},
-                      { $set:
-                          {  
-                              scene: scene,     //  scena attuale del player                     
-                          }
-                      }
-        );
-    },
-
-    'moveX': function(value){
-                Players.update(
-                        { _id: Meteor.userId() }, 
-                        { $set: //consente di modificare sono il parametro selezionato 
-                          { 
-                            x: value, 
-                           }
-                        }
-                );
-    },
-
-    'moveZ': function(value){
-                
-                Players.update(
-                        { _id: Meteor.userId()}, 
-                        { $set: //consente di modificare sono il parametro selezionato 
-                          { 
-                            z: value, 
-                           }
-                        }
-                );
-    }, 
-
-    'cangeR': function(value){
-                
-                Players.update(
-                        { _id: Meteor.userId() }, 
-                        { $set: //consente di modificare sono il parametro selezionato 
-                          { 
-                            r: value, 
-                           }
-                        }
-                );
-    }, 
-
-    'cangeCam': function(value){
-               
-                Players.update(
-                        { _id: Meteor.userId() }, 
-                        { $set: //consente di modificare sono il parametro selezionato 
-                          { 
-                            cam: value, 
-                           }
-                        }
-                );
-    }, 
-
-		'gAccount': function() {
-			var email = Meteor.user().services.google.email;
-
-			console.log(email);
-			return typeof String(email);
-		},
-			
-		'removePlayer': function(id){
-			
-  			return Players.remove(id);
-  		},
-			
-			
 		'removeAllPlayers': function() {
 			return Players.remove({});
 		},
 		
-		//
-		'setPlayerActivity': function(name, type) {
-			console.log('setPlayerActivity: '+ name + ' = '+ type);
-			return Players.update(
-    					{ _id: Meteor.userId() }, 
-    					{ $set: //consente di modificare sono il parametro selezionato 
-    						{
-    							activityName: name, 
-                  activityType: type
-    						}
-    					}
-    				)	
-		},
-	
+		
 //------------- UPLOADS ---------------
 	
 		'uploadInsert': function(fileInfo){
@@ -253,29 +183,14 @@ if (Meteor.isServer) {
 	
 	
 // ---------------- ALERTS ---------------
-
-		'setActivity': function(session, name, type, value){
-			console.log('setActivity: '+ name + ' = '+ value);
-				return Alerts.update(
-    							{ room: session, name: name, type: type}, 
-    							{ $set: //consente di modificare sono il parametro selezionato 
-    								{
-    									value: value, 
-    								}
-    							}
-    			);
-    		
-		},
-		
-		
-
+    
 		'insertActivity': function(session, name, type){
 			
 			return Alerts.insert({
 					room: session,			// 	sessionId
-					name: name,			//	nome dell'attività collaborativa svolta (es. quiz)
-					type: type, 
-          value: false		//	enable: quando settato a true scatena l'evento associato su tutti client
+					name: name,			    //	nome dell'attività collaborativa svolta (es. quiz sulle capitali)
+					type: type,         //  tipo di attività (es. quiz)
+          value: false		    //  quando settato a true scatena l'evento associato su tutti client
 				});
 		},
 
@@ -294,18 +209,18 @@ if (Meteor.isServer) {
 		'insertObject': function(room, scene, name, event, action, attr, succF, succA, failF, failA, x, z ){
 
 				return Objects.insert({
-					room: room, 	// sessionId: id della sessione in cui è caricato
-					scene: scene, 	// indica la scena in cui è caricato 
-					name: name, 	// nome dell'oggetto
-          event: event,   // il trigger (es. click)
+					room: room, 	    // sessionId: id della sessione in cui è caricato
+					scene: scene, 	  // id della scena in cui è caricato 
+					name: name, 	    // nome del file.x3d che rappresenta l'oggetto
+          event: event,     // il trigger (es. click)
           action: action,   // funzione scatenata dall'evento
           attr: attr,       // attributo dell funzione action
           succF: succF,     // funzione eseguita al successo dell'evento
           succA: succA,     // attributo della funzione nel caso di successo
           failF: failF,     // funzione eseguita in caso di fallimento dell'evento
           failA: failA,     // attributo della funzione nel caso  di insuccesso
-					x: x,       	// posizione sull'asse X
-					z: z,			// posizione sull'asse Z
+					x: x,       	    // posizione sull'asse X
+					z: z,			        // posizione sull'asse Z
 					img_path: '/default_img/quiz.jpg' // indica immagini per la personalizzazione degli oggetti
 
 				});
@@ -341,71 +256,17 @@ if (Meteor.isServer) {
         
         				session: session,          	//  sessionID
         				userId: userId,            	//  google account (gmail) di chi ha creato il progetto 
-        				pass: pass,                	//  password per accedere al progetto
+        				pass: pass,                	//  password per accedere al mondo virtuale
         				title: title,              	//  titolo del progetto   
         				description: description,  	//  descrizione
         				path: path,                	//  nome del file xml
        					MD5: MD5,                  	//  estratto dal xml, serve per verificare se il file è stato modificato
-        				loaded: false,				//	indica se il mondo virtuale è attivo (gli oggetti caricati nella collection)
-        				enable: true             	//  utilizzato al momento della verifica 
-                                           			//        per la coerenza dati tra file e i dati corrispondenti nella collection
+        				loaded: false,				      //	indica se il mondo virtuale è attivo (gli oggetti caricati nella collection)
+        				enable: true             	  //  utilizzato al momento della verifica 
+                                           	//        per la coerenza dati tra file e i dati corrispondenti nella collection
       				}); 
   		},
 
-
-  		//TODO: quando avviene l'update bisogna eliminare gli oggetti se già caricati e sloggare gli utenti loggati all'interno
-  		'updateRoom': function(session, userId, pass, title, description, path, MD5){
-      		return Rooms.update(
-          				{ session: session},
-          				{ $set:
-            				{
-                				userId: userId,            	//  account di chi ha creato il progetto 
-                				pass: pass,                	//  password per accedere al progetto
-                				title: title,              	//  titolo del progetto   
-                				description: description,  	//  descrizione
-                				path: path,                	//  nome del file xml
-                				MD5: MD5,                  	//  estratto dal json, serve per verificare se il file è stato modificato
-                				enable: true              	//  utilizzato al momento della verifica 
-                                           					//        di coerenza dati tra file e i dati corrispondenti nella collection
-            				}
-
-          				}
-      				); 
-  		},
-
-      //****************************** enableRoom ********************************//
-      //  Attiva e disattiva la sessione in base al campo value
-      //
-      // value = true
-      //    - carica i dati degli oggetti in Objects (Meteor.activeRooms)
-      //    - imposta a vero il campo loaded che indica se la sessione è attiva
-      // value = false
-      //    - elimina dalla collection Objects tutti gli oggetti della sessione
-      //    - imposta a falso il campo loaded
-      //***********************************************************************
-
-    	'enableRoom': function(session, value) {
-          if (value){
-            Meteor.call('activeRoom', session);
-            console.log('attiva');
-          } else {
-            Objects.remove({room: session});
-            Scenes.remove({room: session});
-            console.log('disattiva');
-          }
-
-          return Rooms.update(
-          		    { session: session},
-          				{ $set:
-            				{
-              	
-                				loaded: value              
-            				}
-
-          				}
-      		); 
-		  },
-  		
     	
     	'removeAllRooms': function() {
 			 return Rooms.remove({});
@@ -424,8 +285,9 @@ if (Meteor.isServer) {
         }); 
       },
 
-      'removeAllSenes': function() {
-       return Scenes.remove({});
+      'removeAllScenes': function() {
+        return Scenes.remove({});
+        
       },
 
 //----------------------------------------------------------------------------------------------------------
@@ -439,6 +301,20 @@ if (Meteor.isServer) {
 		//			
 		//*********************************************************************
 
+      //************** generator ************************************************
+      // popola le collezioni Objects, Scenes con gli dati del configuratore passato (nameFile)
+      //***************************************************************************
+
+      'generator': function (nameFile) {
+          console.log('-- generator --');
+          
+          console.log(nameFile);
+
+          var xmlFile = Meteor.call('xmlLoader', 'xml/'+nameFile);  
+          var jsonFile = Meteor.call('jsonParser', xmlFile);
+          Meteor.call('jsonSceneLoad', jsonFile);
+      
+      },
 
 		//******************** xmlLoader ************************************
   		// ritorna il testo dal file della path
@@ -641,8 +517,6 @@ if (Meteor.isServer) {
 
 
       //********************** jsonSceneLoad ***********************************
-      // TODO: caricare nella collection Scenes le scene 
-      //
       // Carica le Collection Scenes e Objects con i vari dati estratti dall'xml
       //*************************************************************************  
 
@@ -748,22 +622,8 @@ if (Meteor.isServer) {
           
             
           
-      },
-      //**************************** activeRoom *********************************
-      //  avvia la lettura del file xml corrispondente alla sessione 'session' 
-      //  e il carimameto dei dati nelle collection Scenes e Objects
-      //**********************************************************************
-      'activeRoom': function (session) {
-          console.log('-- activeRoom --');
-          console.log('session: '+session);
-          var nomeFile = Rooms.findOne({session: session}).path;
-          console.log(nomeFile);
-
-          var xmlFile = Meteor.call('xmlLoader', 'xml/'+nomeFile);  
-          var jsonFile = Meteor.call('jsonParser', xmlFile);
-          Meteor.call('jsonSceneLoad', jsonFile);
-      
       }
+      
 
 	}); // fine methods
 	
@@ -776,44 +636,9 @@ if (Meteor.isServer) {
   //------------------------------------------------------------------------------------------------------------------
 	Meteor.startup(function() {
 	
-	
-		console.log('Restart....');
+			console.log('Restart...');
 		
-	
-	
-		//Per ogni stanza si verifica che siano presenti tutti gli oggetti associati
-		/*
-		var stanze = Rooms.find({});
-		stanze.forEach(function (room) {
-			console.log('verifico oggetti e attivita: stanza "'+room.name+'"');
-		
-			// Lavagna (object)
-			if (typeof(Objects.findOne({name:'lavagna', room: room._id })) == 'undefined'){
-				console.log("Lavagna NON definito: room = "+ room._id);
-				Meteor.call('insertObject', 'lavagna', room.id);
-			
-			} else {
-				console.log("Oggetto Lavagna DEFINITO:  room = "+ room._id);
-			}
-		
-	
-	
-			// Quiz (activity)
-			if (typeof(Alerts.findOne({name: 'quiz', room: room._id})) == 'undefined'){
-				console.log("Quiz NON definito: room = "+ room._id);
-				Meteor.call('insertActivity', 'quiz', room.id);
-
-			}else{
-				Meteor.call('setActivity', 'quiz', room._id, false );
-				console.log("Quiz DEFINITO: room = "+ room._id);
-			
-			} 
-	
-		});
-		*/
-
-
-    }); //end 'Meteor.startup'  
+  }); //end 'Meteor.startup'  
   //------------------------------------------------------------------------------------------------------------------
 
 

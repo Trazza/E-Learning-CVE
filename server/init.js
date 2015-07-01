@@ -1,7 +1,7 @@
 Meteor.startup(function () {
 
 
-//******************** Upload Init ******************************
+//******************** UploadServer.init ******************************
 //	Inizializza le cartelle per l'upload
 //
 // 	Riferimenti: https://github.com/tomitrescak/meteor-uploads
@@ -16,7 +16,7 @@ Meteor.startup(function () {
   	})
 
 
-	console.log('START....');
+	console.log('START...');
 	console.log('XML_PATH: '+XML_PATH);
   console.log('path attuale: '+process.env.PWD);
   var listF = Meteor.call('listFiles', process.env.PWD+XML_PATH); //process.env.PWD  restituisce la root del progetto

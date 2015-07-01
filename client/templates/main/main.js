@@ -1,3 +1,9 @@
+window.onbeforeunload = function(event) {
+    console.log(event);
+    event.returnValue = "Uscendo dalla pagina i tuoi dati di sessione verrano persi";
+};
+
+
 // each color has a list so that we have a little variation
 var colors = {
   brown: ["#c2892b", "#af7c27", "#b57813"],
@@ -20,7 +26,12 @@ Session.set("color", "brown"); // set initial color
 //  http://docs.meteor.com/#/full/publishandsubscribe
 //
 //**********************************************************
+
+//TODO: filtraggi alle sottoscrizioni del server: estrarre solo i dati necessari per l'utente
+
+
 Tracker.autorun(function () {
+    Meteor.subscribe("userData");
     Meteor.subscribe('uploads');
     Meteor.subscribe("objects");
   	Meteor.subscribe("players");
@@ -29,11 +40,6 @@ Tracker.autorun(function () {
     Meteor.subscribe("scenes");
   
 });
-
-
-
-
-
 
 
 
@@ -60,7 +66,12 @@ var handle_activity_for_all = activity_for_all.observeChanges({
 					  if (typeof user._id != 'undefined' && user.room == activ.room) {
 
 						    console.log('imposta quiz');
-						    Meteor.call('setPlayerActivity', activ.name, activ.type );	
+						    //Meteor.call('setPlayerActivity', activ.name, activ.type );
+                user.setActivity(activ.name, activ.type);	
+                AntiModals.overlay('quiz_template', {
+                    modal: true,
+                  });
+                  console.log('finestramodale');
       		  }
       	}
       	break;
@@ -70,6 +81,7 @@ var handle_activity_for_all = activity_for_all.observeChanges({
 });
 
 // Se il campo 'activity' è modificato, viene scatenato l'evento associato al nome dell'attività impostata
+/*
 var players_activity = Players.find();
 var handle_players_activity = players_activity.observeChanges({
 	changed: function (id, user) {
@@ -90,7 +102,7 @@ var handle_players_activity = players_activity.observeChanges({
 	},
 	
 });
-
+*/
 
 
 // --------------LAVAGNA --------------------------------------------------------------------------------------------------------------------------
@@ -169,133 +181,33 @@ UI.body.events({
     //        cam1
         if (Meteor.userId() != null) {
             event.preventDefault();
-            console.log(event.which);
+            //console.log(event.which);
             //Meteor.call('move', event.which);
             
-            var cam = Players.findOne(Meteor.userId()).cam;
-            var r = Players.findOne(Meteor.userId()).r;
-            var vel = 0.5;
+            var avatar = Players.findOne(Meteor.userId());
+            //var cam = avatar.cam;
+            //var r = avatar.r;
+            //var vel = 0.5;
             //var id = 'fp_sin'+Meteor.userId();
-            var id;
+            //var id;
             //document.getElementById(Players.findOne(Meteor.userId()).cam+Meteor.userId()).setAttribute('set_bind','true');
             switch (event.which) {
             // TRASLAZIONE
             case 38: // freccia su
-                      //Meteor.call('moveFront',cam, 0.5);
-                      switch (cam) {
-                      case 'fp1': 
-                                var z = Players.findOne(Meteor.userId()).z - vel; 
-                                console.log('z: '+z);
-                                Meteor.call('moveZ', z);
-                                break;   
-
-                      case 'fp4': 
-                                var z = Players.findOne(Meteor.userId()).z + vel;
-                                Meteor.call('moveZ', z);
-                                break;
-
-                      case 'fp2': 
-                                var x = Players.findOne(Meteor.userId()).x + vel;
-                                Meteor.call('moveX', x);
-                                break;
-
-                      case 'fp3':
-                                var x = Players.findOne(Meteor.userId()).x - vel;
-                                Meteor.call('moveX', x);
-                                break;
-
-                  }
+                      avatar.moveUp();
                       break;
         
             case 40: // freccia giù
-                      //Meteor.call('moveFront',cam, -0.5);
-                      switch (cam) {
-                      case 'fp1': 
-                                var z = Players.findOne(Meteor.userId()).z + vel; 
-                                Meteor.call('moveZ', z);
-                                break;   
-
-                      case 'fp4': 
-                                var z = Players.findOne(Meteor.userId()).z - vel;
-                                Meteor.call('moveZ', z);
-                                break;
-
-                      case 'fp2': 
-                                var x = Players.findOne(Meteor.userId()).x - vel;
-                                Meteor.call('moveX', x);
-                                break;
-
-                      case 'fp3':
-                                var x = Players.findOne(Meteor.userId()).x + vel;
-                                Meteor.call('moveX', x);
-                                break;
-
-                  }
+                      avatar.moveDown();
                       break;
           
             case 37: //freccia sinistra      
-                      console.log('SIN');                
-                      
-                      
-                       
-                      switch (cam) {
-                          case 'fp1': 
-                                    Meteor.call('cangeCam', 'fp3');
-                                    Meteor.call('cangeR', 1.57079633);
-                                    id = 'fp3'+Meteor.userId();                                    
-                                    break;   
-
-                          case 'fp2': 
-                                    Meteor.call('cangeCam', 'fp1');
-                                    Meteor.call('cangeR', 0);
-                                    id = 'fp1'+Meteor.userId();
-                                    break;
-
-                          case 'fp3': 
-                                    Meteor.call('cangeCam', 'fp4');
-                                    Meteor.call('cangeR', 3.14159265);
-                                    id = 'fp4'+Meteor.userId();
-                                    break;
-
-                          case 'fp4':
-                                    Meteor.call('cangeCam', 'fp2');
-                                    Meteor.call('cangeR', -1.57079633);
-                                    id = 'fp2'+Meteor.userId();
-                                    break;
-                      }
-                                        document.getElementById(id).setAttribute('set_bind','true');
+                      avatar.turnLeft();
                       break;
 
           
             case 39: // freccia destra
-                      switch (cam) {
-                          case 'fp1': 
-                                    Meteor.call('cangeCam', 'fp2');
-                                    Meteor.call('cangeR', -1.57079633);
-                                    id = 'fp2'+Meteor.userId();
-                                    break;   
-
-                          case 'fp2': 
-                                    Meteor.call('cangeCam', 'fp4');
-                                    Meteor.call('cangeR', 3.14159265);
-                                    id = 'fp4'+Meteor.userId();
-                                    break;
-
-                          case 'fp3': 
-                                    Meteor.call('cangeCam', 'fp1');
-                                    Meteor.call('cangeR', 0);
-                                    id = 'fp1'+Meteor.userId();
-                                    break;
-
-                          case 'fp4':
-                                    Meteor.call('cangeCam', 'fp3');
-                                    Meteor.call('cangeR', 1.57079633);
-                                    id = 'fp3'+Meteor.userId();
-                                    break;
-
-                      }
-                      
-                      document.getElementById(id).setAttribute('set_bind','true');
+                      avatar.turnRight();
                       break;
 
 
