@@ -11,7 +11,7 @@
         </session>
         <description>descrizione del progetto</description>
         <screenplay>descrizione_screen</screenplay> <!-- ?? -->
-        <title>titolo progetto</title>
+        <title>Esempio</title>
         <mondo>
             <name>mondo1GSA</name>
             <path>x3d/mondo1.x3d</path> <!-- xml non x3d (cmq non necessario)-->

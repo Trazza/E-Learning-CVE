@@ -81,12 +81,12 @@ Template.select_session.events({
 
   "click .enableRoom": function() {
       //Meteor.call('enableRoom', this.session, true);
-      Rooms.findOne({session: this.session}).start(true);
+      Rooms.findOne({session: this.session}).active(true);
   },
 
    "click .disableRoom": function() {
       //Meteor.call('enableRoom', this.session, false);
-      Rooms.findOne({session: this.session}).start(false);
+      Rooms.findOne({session: this.session}).active(false);
   },
 
   'click #enterSession' : function(e, t){
@@ -96,7 +96,9 @@ Template.select_session.events({
             return;
         } else {
             var session = t.find('#rooms').value;  // id la sessione in cui si collega il player 
+            console.log(session);
             var pass = Rooms.findOne({session: session}).pass;
+            console.log(session);
             var password = prompt('Inserisci la password' , pass);
             if(pass == password){
                 var scene = Scenes.findOne({room: session}).id; // prima scena della sessione (dovrebbe essere la prima scena caricata)
@@ -109,9 +111,7 @@ Template.select_session.events({
   },
 
   'click #prova' : function(){
-      var email = Meteor.call('getEmail');
-      console.log('email: '+email);
-      console.log(Meteor.user().services.google.email);
+     Prova.getFrase();
   }
     
 });

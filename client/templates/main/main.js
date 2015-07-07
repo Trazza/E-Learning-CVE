@@ -43,7 +43,6 @@ Tracker.autorun(function () {
 
 
 
-
 // ******************* Activity *************************************************************
 
 //Vengono osservate le modifiche sulla collection Alerts
@@ -53,32 +52,37 @@ Tracker.autorun(function () {
 var activity_for_all = Alerts.find();
 
 var handle_activity_for_all = activity_for_all.observeChanges({ 
-	changed: function (id, activity) { 
+  changed: function (id, activity) { 
     var user = Players.findOne(Meteor.userId());
-		var activ = Alerts.findOne(id);
-		console.log('change: '+ id + ' -  activ.name: ' + activ.name + ' - value: '+ activ.value + ' - room: ' + activ.room);
-		console.log('Session: '+ user.room);
-		console.log('activity.room:  = '+ activ.room);
-		//verifichiamo il tipo di evento scatenato
-		switch (activ.type){
-			case 'quiz':
-				if(activ.value == true){
-					  if (typeof user._id != 'undefined' && user.room == activ.room) {
+    var activ = Alerts.findOne(id);
+    console.log('change: '+ id + ' -  activ.name: ' + activ.name + ' - value: '+ activ.value + ' - room: ' + activ.room);
+    console.log('Session: '+ user.room);
+    console.log('activity.room:  = '+ activ.room);
+    //verifichiamo il tipo di evento scatenato
+    switch (activ.type){
+      case 'quiz':
+        if(activ.value == true){
+            if (typeof user._id != 'undefined' && user.room == activ.room) {
 
-						    console.log('imposta quiz');
-						    //Meteor.call('setPlayerActivity', activ.name, activ.type );
-                user.setActivity(activ.name, activ.type);	
+                console.log('imposta quiz');
+                //Meteor.call('setPlayerActivity', activ.name, activ.type );
+                user.setActivity(activ.name, activ.type); 
                 AntiModals.overlay('quiz_template', {
                     modal: true,
                   });
                   console.log('finestramodale');
-      		  }
-      	}
-      	break;
+            }
+        }
+        break;
       }
-	},
-	
+  },
+  
 });
+
+
+
+
+
 
 // Se il campo 'activity' è modificato, viene scatenato l'evento associato al nome dell'attività impostata
 /*
@@ -192,6 +196,7 @@ UI.body.events({
             //var id;
             //document.getElementById(Players.findOne(Meteor.userId()).cam+Meteor.userId()).setAttribute('set_bind','true');
             switch (event.which) {
+            
             // TRASLAZIONE
             case 38: // freccia su
                       avatar.moveUp();
